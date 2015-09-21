@@ -119,7 +119,7 @@
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Windows.Controls.DataVisualization.Toolkit, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>.\System.Windows.Controls.DataVisualization.Toolkit.dll</HintPath>
+      <HintPath>References\System.Windows.Controls.DataVisualization.Toolkit.dll</HintPath>
     </Reference>
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\MetroRadiance.Chrome.1.1.0.2\lib\net45\System.Windows.Interactivity.dll</HintPath>
@@ -171,6 +171,7 @@
     <Compile Include="Models\Utilities\ChartExtensions.cs" />
     <Compile Include="Models\Utilities\ChartUtilities.cs" />
     <Compile Include="ViewModels\ToolViewModel.cs" />
+    <Compile Include="Views\Converters\SolidBrushToTransparentBrushConverter.cs" />
     <Compile Include="Views\ToolView.xaml.cs">
       <DependentUpon>ToolView.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -204,6 +205,9 @@
   <ItemGroup>
     <Analyzer Include="..\packages\KanColleViewer.PluginAnalyzer.1.0.1.0\analyzers\KanColleViewer.Composition.dll" />
     <Analyzer Include="..\packages\KanColleViewer.PluginAnalyzer.1.0.1.0\analyzers\KanColleViewer.PluginAnalyzer.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="References\System.Windows.Controls.DataVisualization.Toolkit.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

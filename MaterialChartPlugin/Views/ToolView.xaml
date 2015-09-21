@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:MaterialChartPlugin"
+             xmlns:converters="clr-namespace:MaterialChartPlugin.Views.Converters"
              xmlns:ViewModels="clr-namespace:MaterialChartPlugin.ViewModels" xmlns:Custom="http://schemes.grabacr.net/winfx/2014/controls"
              xmlns:settings="clr-namespace:MaterialChartPlugin.Models.Settings"
              xmlns:sparrowToolkit="http://sparrowtoolkit.codeplex.com/wpf"
@@ -20,13 +21,17 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="../Styles/PluginStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-            <!-- データポイントを表示しないようにするスタイル（↓ の SimpleLineSeriesStyleで使用） -->
-            <Style x:Key="EmptyPointsStyle" TargetType="{x:Type chartingToolkit:DataPoint}">
+            <converters:SolidBrushToTransparentBrushConverter x:Key="BorderBrushToFillBrushConverter"/>
+            <!-- データポイントを表示しないようにするスタイル（↓ の Simple[Line/Area]SeriesStyleで使用） -->
+            <Style x:Key="EmptyLineDataPointsStyle" TargetType="{x:Type chartingToolkit:LineDataPoint}">
+                <Setter Property="Template" Value="{x:Null}"/>
+            </Style>
+            <Style x:Key="EmptyAreaDataPointsStyle" TargetType="{x:Type chartingToolkit:AreaDataPoint}">
                 <Setter Property="Template" Value="{x:Null}"/>
             </Style>
             <!-- データポイントのない線だけの LineSeries（線色は BorderBrush プロパティで指定できる） -->
             <Style x:Key="SimpleLineSeriesStyle" TargetType="{x:Type chartingToolkit:LineSeries}">
-                <Setter Property="DataPointStyle" Value="{StaticResource EmptyPointsStyle}"/>
+                <Setter Property="DataPointStyle" Value="{StaticResource EmptyLineDataPointsStyle}"/>
                 <Setter Property="PolylineStyle">
                     <Setter.Value>
                         <Style TargetType="{x:Type Polyline}">
@@ -48,7 +53,7 @@
             <!-- データポイントのない線だけの AreaSeries（線色は BorderBrush プロパティで指定できる） -->
             <Style x:Key="SimpleAreaSeriesStyle" TargetType="{x:Type chartingToolkit:AreaSeries}">
                 <Setter Property="IsTabStop" Value="False"/>
-                <Setter Property="DataPointStyle" Value="{StaticResource EmptyPointsStyle}"/>
+                <Setter Property="DataPointStyle" Value="{StaticResource EmptyAreaDataPointsStyle}"/>
                 <Setter Property="PathStyle">
                     <Setter.Value>
                         <Style TargetType="{x:Type Path}">
@@ -60,20 +65,12 @@
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type chartingToolkit:AreaSeries}">
                             <Canvas x:Name="PlotArea">
-                                <Path Data="{TemplateBinding Geometry}" Stroke="{TemplateBinding BorderBrush}" Fill="{TemplateBinding Background}" Style="{TemplateBinding PathStyle}" StrokeThickness="2"/>
+                                <Path Data="{TemplateBinding Geometry}" Stroke="{TemplateBinding BorderBrush}" Fill="{TemplateBinding BorderBrush, Converter={StaticResource BorderBrushToFillBrushConverter}, ConverterParameter=0.2}" Style="{TemplateBinding PathStyle}" StrokeThickness="2"/>
                             </Canvas>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
             </Style>
-            <ControlTemplate x:Key="LegendControlTemplate" TargetType="{x:Type visualizationToolkit:Legend}">
-                <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Padding="2">
-                    <ScrollViewer BorderThickness="0" IsTabStop="False" Padding="0" Grid.Row="1" VerticalScrollBarVisibility="Auto">
-                        <StackPanel x:Name="LegendItemsArea" Grid.Column="1" Margin="10,5,10,5"/>
-                    </ScrollViewer>
-                </Border>
-            </ControlTemplate>
-
             <Style x:Key="MaterialChartStyle" TargetType="{x:Type chartingToolkit:Chart}">
                 <Setter Property="BorderBrush" Value="{x:Null}"/>
                 <Setter Property="IsTabStop" Value="False"/>
@@ -84,16 +81,6 @@
                             <Setter Property="FontSize" Value="16"/>
                             <Setter Property="HorizontalAlignment" Value="Center"/>
                             <Setter Property="Margin" Value="0,10"/>
-                        </Style>
-                    </Setter.Value>
-                </Setter>
-                <Setter Property="LegendStyle">
-                    <Setter.Value>
-                        <Style TargetType="{x:Type visualizationToolkit:Legend}">
-                            <Setter Property="Margin" Value="15,0"/>
-                            <Setter Property="VerticalAlignment" Value="Center"/>
-                            <Setter Property="BorderBrush" Value="{DynamicResource BorderBrushKey}"/>
-                            <Setter Property="Background" Value="{x:Null}"/>
                         </Style>
                     </Setter.Value>
                 </Setter>
@@ -116,46 +103,20 @@
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type chartingToolkit:Chart}">
                             <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Padding="5,0">
-                                <Grid>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="*"/>
-                                    </Grid.RowDefinitions>
-                                    <visualizationToolkit:Title Content="{TemplateBinding Title}" Style="{TemplateBinding TitleStyle}"/>
-                                    <Grid Grid.Row="1">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        <visualizationToolkit:Legend x:Name="Legend" Grid.Column="1" Style="{TemplateBinding LegendStyle}" Title="{TemplateBinding LegendTitle}" VerticalAlignment="Top" Template="{DynamicResource LegendControlTemplate}"/>
-                                        <Primitives:EdgePanel x:Name="ChartArea" Style="{TemplateBinding ChartAreaStyle}">
-                                            <Grid Style="{TemplateBinding PlotAreaStyle}" Panel.ZIndex="-1"/>
-                                            <Border BorderBrush="{DynamicResource BorderBrushKey}" BorderThickness="1" Panel.ZIndex="10"/>
-                                        </Primitives:EdgePanel>
-                                    </Grid>
-                                </Grid>
+                                <Primitives:EdgePanel x:Name="ChartArea" Style="{TemplateBinding ChartAreaStyle}">
+                                    <Grid Style="{TemplateBinding PlotAreaStyle}" Panel.ZIndex="-1"/>
+                                    <Border BorderBrush="{DynamicResource BorderBrushKey}" BorderThickness="1" Panel.ZIndex="10"/>
+                                </Primitives:EdgePanel>
                             </Border>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
             </Style>
+
             <Style x:Key="MajorTickStyle" TargetType="{x:Type Line}">
                 <Setter Property="Stroke" Value="{DynamicResource BorderBrushKey}"/>
                 <Setter Property="X2" Value="4"/>
                 <Setter Property="Y2" Value="4"/>
-            </Style>
-            <Style x:Key="LegendItemStyle" TargetType="{x:Type chartingToolkit:LegendItem}">
-                <Setter Property="IsTabStop" Value="False"/>
-                <Setter Property="Template">
-                    <Setter.Value>
-                        <ControlTemplate TargetType="{x:Type chartingToolkit:LegendItem}">
-                            <StackPanel Orientation="Horizontal" Margin="0,1">
-                                <Rectangle Fill="{Binding BorderBrush}" Height="8" Margin="0,0,4,0" Stroke="{Binding BorderBrush}" StrokeThickness="1" Width="8"/>
-                                <visualizationToolkit:Title Content="{TemplateBinding Content}"/>
-                            </StackPanel>
-                        </ControlTemplate>
-                    </Setter.Value>
-                </Setter>
             </Style>
             <Style x:Key="DateTimeAxisLabelStyle" TargetType="{x:Type chartingToolkit:DateTimeAxisLabel}">
                 <Setter Property="YearsIntervalStringFormat" Value="{}{0:yyyy/MM/dd}"/>
@@ -168,7 +129,6 @@
     </UserControl.Resources>
 
     <ScrollViewer>
-
         <StackPanel Margin="12,0,12,12">
             <Border BorderBrush="{DynamicResource BorderBrushKey}" BorderThickness="0,0,0,1" Padding="0,10" >
                 <WrapPanel VerticalAlignment="Top" Margin="0" HorizontalAlignment="Left">
@@ -223,76 +183,25 @@
                 <controls:CallMethodButton x:Name="callMethodButton" Content=".csv形式でエクスポート" Grid.Column="1" MethodName="ExportAsCsv" Width="150" HorizontalAlignment="Right" VerticalAlignment="Center" Height="35"/>
             </Grid>
 
-            <chartingToolkit:Chart Height="200" Style="{DynamicResource MaterialChartStyle}" >
-                <chartingToolkit:Chart.StylePalette>
-                    <visualizationToolkit:StylePalette>
-                        <Style TargetType="{x:Type Control}">
-                            <Setter Property="BorderBrush" Value="#FF5DA353"/>
-                            <Setter Property="Background" Value="#4C5DA353"/>
-                        </Style>
-                        <Style TargetType="{x:Type Control}">
-                            <Setter Property="BorderBrush" Value="#FF9A8F61"/>
-                            <Setter Property="Background" Value="#4C9A8F61"/>
-                        </Style>
-                        <Style TargetType="{x:Type Control}">
-                            <Setter Property="BorderBrush" Value="#FFC9C9C9"/>
-                            <Setter Property="Background" Value="#4CC9C9C9"/>
-                        </Style>
-                        <Style TargetType="{x:Type Control}">
-                            <Setter Property="BorderBrush" Value="#FFC7844D"/>
-                            <Setter Property="Background" Value="#4CC7844D"/>
-                        </Style>
-                        <Style TargetType="{x:Type Control}">
-                            <Setter Property="BorderBrush" Value="#FF584C76"/>
-                            <Setter Property="Background" Value="#4C584C76"/>
-                        </Style>
-
-                    </visualizationToolkit:StylePalette>
-                </chartingToolkit:Chart.StylePalette>
-
+            <chartingToolkit:Chart Height="200" Style="{DynamicResource MaterialChartStyle}" Margin="0,20,0,0" >
                 <chartingToolkit:Chart.Axes>
                     <chartingToolkit:DateTimeAxis Orientation="X" Minimum="{Binding XMin}" Maximum="{Binding XMax}" MajorTickMarkStyle="{DynamicResource MajorTickStyle}" Location="Bottom" AxisLabelStyle="{StaticResource DateTimeAxisLabelStyle}"/>
                     <chartingToolkit:LinearAxis Orientation="Y" Minimum="0" Maximum="{Binding YMax1}" MajorTickMarkStyle="{DynamicResource MajorTickStyle}" Location="Left"/>
                 </chartingToolkit:Chart.Axes>
-                <chartingToolkit:AreaSeries DependentValuePath="Y" IndependentValuePath="X" ItemsSource="{Binding FuelSeries}" Title="燃料" Style="{StaticResource SimpleAreaSeriesStyle}" LegendItemStyle="{DynamicResource LegendItemStyle}" BorderBrush="#FF5DA353" />
-                <chartingToolkit:AreaSeries DependentValuePath="Y" IndependentValuePath="X" ItemsSource="{Binding AmmunitionSeries}" Title="弾薬" Style="{DynamicResource SimpleAreaSeriesStyle}"  LegendItemStyle="{DynamicResource LegendItemStyle}" BorderBrush="#FF9A8F61"/>
-                <chartingToolkit:AreaSeries DependentValuePath="Y" IndependentValuePath="X" ItemsSource="{Binding SteelSeries}" Title="鋼材" Style="{DynamicResource SimpleAreaSeriesStyle}"  LegendItemStyle="{DynamicResource LegendItemStyle}" BorderBrush="#FFC9C9C9"/>
-                <chartingToolkit:AreaSeries DependentValuePath="Y" IndependentValuePath="X" ItemsSource="{Binding BauxiteSeries}" Title="ボーキサイト" Style="{DynamicResource SimpleAreaSeriesStyle}"  LegendItemStyle="{DynamicResource LegendItemStyle}" BorderBrush="#FFC7844D"/>
-                <chartingToolkit:LineSeries DependentValuePath="Y" IndependentValuePath="X" ItemsSource="{Binding StorableLimitSeries}" Title="回復上限" Style="{DynamicResource SimpleLineSeriesStyle}"  LegendItemStyle="{DynamicResource LegendItemStyle}" BorderBrush="#FF584C76"/>
+                <chartingToolkit:AreaSeries DependentValuePath="Y" IndependentValuePath="X" ItemsSource="{Binding FuelSeries}" Title="燃料" Style="{DynamicResource SimpleAreaSeriesStyle}" BorderBrush="#FF5DA353"/>
+                <chartingToolkit:AreaSeries DependentValuePath="Y" IndependentValuePath="X" ItemsSource="{Binding AmmunitionSeries}" Title="弾薬"  Style="{DynamicResource SimpleAreaSeriesStyle}" BorderBrush="#FF9A8F61"/>
+                <chartingToolkit:AreaSeries DependentValuePath="Y" IndependentValuePath="X" ItemsSource="{Binding SteelSeries}" Title="鋼材" Style="{DynamicResource SimpleAreaSeriesStyle}" BorderBrush="#FFC9C9C9"/>
+                <chartingToolkit:AreaSeries DependentValuePath="Y" IndependentValuePath="X" ItemsSource="{Binding BauxiteSeries}" Title="ボーキサイト" Style="{DynamicResource SimpleAreaSeriesStyle}" BorderBrush="#FFC7844D"/>
+                <chartingToolkit:LineSeries DependentValuePath="Y" IndependentValuePath="X" ItemsSource="{Binding StorableLimitSeries}" Title="回復上限" Style="{DynamicResource SimpleLineSeriesStyle}" BorderBrush="#FF584C76"/>
+            </chartingToolkit:Chart>
+            <chartingToolkit:Chart Height="200" Style="{DynamicResource MaterialChartStyle}" Margin="0,25,0,0" >
+                <chartingToolkit:Chart.Axes>
+                    <chartingToolkit:DateTimeAxis Orientation="X" Minimum="{Binding XMin}" Maximum="{Binding XMax}" MajorTickMarkStyle="{DynamicResource MajorTickStyle}" Location="Bottom" AxisLabelStyle="{StaticResource DateTimeAxisLabelStyle}"/>
+                    <chartingToolkit:LinearAxis Orientation="Y" Minimum="0" Maximum="{Binding YMax2}" MajorTickMarkStyle="{DynamicResource MajorTickStyle}" Location="Left"/>
+                </chartingToolkit:Chart.Axes>
+                <chartingToolkit:AreaSeries DependentValuePath="Y" IndependentValuePath="X" ItemsSource="{Binding RepairToolSeries}" Title="高速修復材" Style="{DynamicResource SimpleAreaSeriesStyle}" BorderBrush="#FFA2C08B"/>
             </chartingToolkit:Chart>
 
-            <!--
-            <!- グラフの幅が上下で揃わないのをなんとかしたい（AxisWidthをいじってもガン無視されて駄目） ->
-            <sparrowToolkit:SparrowChart Height="200" RenderingMode="WritableBitmap" ContainerBorderStyle="{DynamicResource containerBorderStyle}" Margin="0,20,0,0" MinWidth="300" >
-                <sparrowToolkit:SparrowChart.Legend>
-                    <sparrowToolkit:Legend Padding="5" Margin="10,0,0,10" VerticalAlignment="Top" HorizontalAlignment="Right" Dock="Right" Header="" Background="{DynamicResource SemiactiveBackgroundBrushKey}" BorderBrush="{DynamicResource SemiactiveBorderBrushKey}" BorderThickness="1" HeaderTemplate="{DynamicResource legendTitleTemplate}" Width="90"/>
-                </sparrowToolkit:SparrowChart.Legend>
-                <sparrowToolkit:SparrowChart.XAxis>
-                    <!- AxisLineStyleはDependencyPropertyではないのでDynamicResourceが使えないそうなので仕方なくStaticResourceで ->
-                    <sparrowToolkit:DateTimeXAxis MinValue="{Binding XMin}" MaxValue="{Binding XMax}" StringFormat="{Binding DateTimeLabelFormat}" Interval="{Binding XInterval}" AxisLineStyle="{StaticResource AxisLineStyle}" HeaderTemplate="{DynamicResource xAxisHeaderTemplate}" MajorLineStyle="{DynamicResource majorLineStyle}" MinorLineStyle="{DynamicResource minorLineStyle}" MinorCrossLineStyle="{DynamicResource minorLineStyle}" CrossLineStyle="{DynamicResource crossLineStyle}" MinorTicksCount="{Binding MinorTicksCount}" Visibility="{Binding XAxisVisibility}" />
-                </sparrowToolkit:SparrowChart.XAxis>
-                <sparrowToolkit:SparrowChart.YAxis>
-                    <sparrowToolkit:LinearYAxis MinValue="{Binding YMin}" MaxValue="{Binding YMax1}" MinorTicksCount="4" AxisLineStyle="{StaticResource AxisLineStyle}" HeaderTemplate="{DynamicResource yAxisHeaderTemplate}" MajorLineStyle="{DynamicResource majorLineStyle}" MinorLineStyle="{DynamicResource minorLineStyle}" MinorCrossLineStyle="{DynamicResource minorCrossLineStyle}" CrossLineStyle="{DynamicResource crossLineStyle}" MinorLineSize="0" Interval="{Binding YInterval1}"/>
-                </sparrowToolkit:SparrowChart.YAxis>
-                <sparrowToolkit:AreaSeries x:Name="FuelLineSeries" Label="燃料" XPath="X" YPath="Y" StrokeThickness="2" PointsSource="{Binding FuelSeries}" Stroke="#FF5DA353" Fill="#4C5DA353"/>
-                <sparrowToolkit:AreaSeries x:Name="AmmunitionSeries" Label="弾薬" XPath="X" YPath="Y" StrokeThickness="2" PointsSource="{Binding AmmunitionSeries}" Stroke="#FF9A8F61" Fill="#4C9A8F61"/>
-                <sparrowToolkit:AreaSeries x:Name="SteelSeries" Label="鋼材" XPath="X" YPath="Y" StrokeThickness="2" PointsSource="{Binding SteelSeries}" Stroke="#FFC9C9C9" Fill="#4CC9C9C9"/>
-                <sparrowToolkit:AreaSeries x:Name="BauxiteSeries" Label="ボーキサイト" XPath="X" YPath="Y" StrokeThickness="2" PointsSource="{Binding BauxiteSeries}" Stroke="#FFC7844D" Fill="#4CC7844D"/>
-                <sparrowToolkit:LineSeries x:Name="LimitSeries" Label="回復上限" XPath="X" YPath="Y" StrokeThickness="2.5" PointsSource="{Binding StorableLimitSeries}" Stroke="#FF584C76"/>
-            </sparrowToolkit:SparrowChart>
-            <sparrowToolkit:SparrowChart Height="200" RenderingMode="WritableBitmap" ContainerBorderStyle="{DynamicResource containerBorderStyle}" Margin="0,25,0,0" MinWidth="300" >
-                <sparrowToolkit:SparrowChart.Legend>
-                    <sparrowToolkit:Legend Padding="5" Margin="10,0,0,10" VerticalAlignment="Top" HorizontalAlignment="Right" Dock="Right" Background="{DynamicResource SemiactiveBackgroundBrushKey}" BorderBrush="{DynamicResource SemiactiveBorderBrushKey}" BorderThickness="1" HeaderTemplate="{DynamicResource legendTitleTemplate}" Width="90"/>
-                </sparrowToolkit:SparrowChart.Legend>
-                <sparrowToolkit:SparrowChart.XAxis>
-                    <sparrowToolkit:DateTimeXAxis MinValue="{Binding XMin}" MaxValue="{Binding XMax}" StringFormat="{Binding DateTimeLabelFormat}" AxisLineStyle="{StaticResource AxisLineStyle}"  HeaderTemplate="{DynamicResource xAxisHeaderTemplate}" MajorLineStyle="{DynamicResource majorLineStyle}" MinorLineStyle="{DynamicResource minorLineStyle}" MinorCrossLineStyle="{DynamicResource minorCrossLineStyle}" CrossLineStyle="{DynamicResource crossLineStyle}" Interval="{Binding XInterval}" MinorTicksCount="{Binding MinorTicksCount}" Visibility="{Binding XAxisVisibility}"/>
-                </sparrowToolkit:SparrowChart.XAxis>
-                <sparrowToolkit:SparrowChart.YAxis>
-                    <sparrowToolkit:LinearYAxis MinValue="{Binding YMin}" MaxValue="{Binding YMax2}" AxisLineStyle="{StaticResource AxisLineStyle}"  HeaderTemplate="{DynamicResource yAxisHeaderTemplate}" MajorLineStyle="{DynamicResource majorLineStyle}" MinorLineStyle="{DynamicResource minorLineStyle}" MinorCrossLineStyle="{DynamicResource minorCrossLineStyle}" CrossLineStyle="{DynamicResource crossLineStyle}" MinorTicksCount="4" MinorLineSize="0" Interval="{Binding YInterval2}"/>
-                </sparrowToolkit:SparrowChart.YAxis>
-                <sparrowToolkit:AreaSeries x:Name="RepairToolSeries" Label="高速修復材" XPath="X" YPath="Y" StrokeThickness="2" PointsSource="{Binding RepairToolSeries}" Stroke="#FFA2C08B" Fill="#4CA2C08B" />
-            </sparrowToolkit:SparrowChart>
-            -->
         </StackPanel>
     </ScrollViewer>
 </UserControl>
