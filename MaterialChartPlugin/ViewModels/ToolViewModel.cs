@@ -260,7 +260,7 @@ namespace MaterialChartPlugin.ViewModels
             Observable.FromEvent<NotifyCollectionChangedEventHandler, NotifyCollectionChangedEventArgs>
                 (h => (sender, e) => h(e), h => history.CollectionChanged += h, h => history.CollectionChanged -= h)
                 .Where(_ => materialManager.Log.HasLoaded)
-                .Throttle(TimeSpan.FromMilliseconds(50))
+                .Throttle(TimeSpan.FromMilliseconds(10))
                 .Subscribe(_ => UpdateData(history.Last()));
         }
 

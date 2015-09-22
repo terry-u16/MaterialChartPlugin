@@ -82,8 +82,8 @@ namespace MaterialChartPlugin.Models
                         h => materials.PropertyChanged -= h)
                         // プロパティ名が一致しているか調べて
                         .Where(e => IsObservedPropertyName(e.PropertyName))
-                        // まとめて通知が来るので50ms待機して
-                        .Throttle(TimeSpan.FromMilliseconds(50))
+                        // まとめて通知が来るので10ms待機して
+                        .Throttle(TimeSpan.FromMilliseconds(10))
                         // 処理
                         .Subscribe(async _ =>
                         {
