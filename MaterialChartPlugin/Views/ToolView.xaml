@@ -127,43 +127,42 @@
             </Style>
         </ResourceDictionary>
     </UserControl.Resources>
-
     <ScrollViewer>
         <StackPanel Margin="12,0,12,12">
             <Border BorderBrush="{DynamicResource BorderBrushKey}" BorderThickness="0,0,0,1" Padding="0,10" >
                 <WrapPanel VerticalAlignment="Top" Margin="0" HorizontalAlignment="Left">
-                    <Grid Margin="5,5,15,5">
+                    <Grid Margin="5,5,15,5" Height="18">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="15"/>
+                            <ColumnDefinition Width="18"/>
                             <ColumnDefinition Width="60"/>
-                            <ColumnDefinition Width="20"/>
                             <ColumnDefinition Width="15"/>
+                            <ColumnDefinition Width="18"/>
                             <ColumnDefinition Width="60"/>
                         </Grid.ColumnDefinitions>
-                        <Ellipse Fill="#FF5DA353" Height="15" Stroke="#FF5DA353" VerticalAlignment="Center" Width="15"/>
+                        <Path Data="M6.3108874E-30,3.835 C2.00521,5.607029 8.3790627,6.1443892 13.296618,5.6167414 L13.53,5.5903068 C13.53,5.5903068 13.499516,29.528772 13.499516,29.528772 L13.283225,29.55587 C8.1987713,30.156315 1.518509,29.428873 6.3108874E-30,27.500977 z M9.4942633,3.8147031E-08 C14.7378,-1.9642123E-07 18.988526,1.0839185 18.988526,2.4209999 18.988526,2.5463513 18.998539,2.6067839 18.926504,2.7270004 L18.326504,2.8270004 C15.837748,3.1717484 14.162992,3.8572045 13.647956,4.5924429 L13.643755,4.5989088 13.610419,4.6032628 C12.36522,4.7562603 10.969008,4.8419999 9.4942633,4.8419999 4.2507267,4.8419999 7.3461803E-08,3.7580815 0,2.4209999 7.3461803E-08,1.0839185 4.2507267,-1.9642123E-07 9.4942633,3.8147031E-08 z M14.55,6.985 L14.55,30.650977 C16.864001,33.588723 31.164001,33.739022 33.539001,30.650977 L33.539001,7.0853292 C30.805667,9.5185735 17.605668,9.6852341 14.55,6.985 z M33.539,5.5709999 C33.539,6.9080813 29.288167,7.9919998 24.044499,7.9919998 18.800832,7.9919998 14.55,6.9080813 14.55,5.5709999 14.55,4.2339187 18.800832,3.15 24.044499,3.15 29.288167,3.15 33.539,4.2339187 33.539,5.5709999 z" Fill="#FF5DA353" Stretch="Uniform"/>
                         <TextBlock TextWrapping="Wrap" Text="{Binding Fuel}" d:LayoutOverrides="Width, Height" Grid.Column="1" HorizontalAlignment="Right" FontSize="14.667" VerticalAlignment="Center"/>
-                        <Ellipse Fill="#FF9A8F61" Height="15" Stroke="#FF9A8F61" VerticalAlignment="Center" Width="15" Grid.Column="3"/>
+                        <Path Data="M0,10.649461 L8.8213333,17.728667 25.137699,22.795001 C23.89425,20.587002 25.69425,14.187002 27.871,13.328669 L11.954667,9.0620003 0.250497,9.6494848 z M25.935383,18.008252 C26.579218,15.751495 28.044053,13.537293 28.772571,13.761745 29.307201,13.926462 29.539472,16.62745 28.806286,18.926592 28.021321,21.3881 26.637166,23.29144 26.069213,23.124843 25.50126,22.958247 25.318079,20.172016 25.935383,18.008252 z M27.842591,12.480495 C27.842591,12.480495 27.842591,12.480495 27.842591,12.480495 z M31.695725,4.6862061 C31.74663,4.6817667 31.795039,4.6862695 31.840571,4.7002993 32.375201,4.8650354 32.607472,7.5663414 31.874285,9.8657541 31.138383,12.17369 30.229669,13.88814 29.60675,13.969 L29.53175,13.51875 C29.415083,13.13514 29.18175,12.794209 28.68175,12.794209 28.657928,12.794209 28.65675,12.594201 28.65675,12.594201 28.545887,11.549093 28.636859,10.232192 29.003384,8.9473052 29.606978,6.8313472 30.932154,4.7527942 31.695725,4.6862061 z M15.022667,2.7465819E-07 L30.939,4.2671714 C29.102366,4.9914755 27.533948,9.6614348 27.835568,12.429565 L27.839732,12.459753 11.954667,8.2009662 11.345901,8.2315265 3.068,1.5876481 3.3184968,0.58755406 z" Fill="#FF9A8F61" Stretch="Uniform" Grid.Column="3"/>
                         <TextBlock TextWrapping="Wrap" Text="{Binding Ammunition}" d:LayoutOverrides="Width, Height" Grid.Column="4" HorizontalAlignment="Right" FontSize="14.667" VerticalAlignment="Center"/>
                     </Grid>
-                    <Grid Margin="5,5,15,5">
+                    <Grid Margin="5,5,15,5" Height="18">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="15"/>
+                            <ColumnDefinition Width="18"/>
                             <ColumnDefinition Width="60"/>
-                            <ColumnDefinition Width="20"/>
                             <ColumnDefinition Width="15"/>
+                            <ColumnDefinition Width="18"/>
                             <ColumnDefinition Width="60"/>
                         </Grid.ColumnDefinitions>
-                        <Ellipse Fill="#FFC9C9C9" Height="15" Stroke="#FFC9C9C9" VerticalAlignment="Center" Width="15"/>
+                        <Path Data="M4.7505285,10.814 L4.051,18.513998 23.651952,23.414 24.301,15.076499 z M4.001,10.826 L3.2508609,18.700815 1.8528846E-22,22.126 0.9502327,11.576433 z M3.8000442,19.378 L0.35,23.002497 24.900001,29.539 23.750494,24.377744 z M25.150684,15.427 L24.451,23.902295 25.4505,28.588999 26.351,17.177 z M13.181054,8.5639999 L33.131495,13.563743 34.281002,18.725 27.113,16.780667 25.731687,14.68 10.647224,11.225955 z M34.531683,4.6129998 L35.732,6.3629997 34.831501,17.774999 33.832001,13.088295 z M13.38201,0.012000175 L12.631871,7.8868144 9.6657693,11.011972 9.413,10.956862 10.331244,0.762433 z M14.131538,1.2969971E-07 L33.682001,4.2624992 33.032954,12.6 13.43201,7.6999972 z" Fill="#FFC9C9C9" Stretch="Uniform"/>
                         <TextBlock TextWrapping="Wrap" Text="{Binding Steel}" d:LayoutOverrides="Width, Height" Grid.Column="1" HorizontalAlignment="Right" FontSize="14.667" VerticalAlignment="Center"/>
-                        <Ellipse Fill="#FFC7844D" Height="15" Stroke="#FFC7844D" VerticalAlignment="Center" Width="15" Grid.Column="3"/>
+                        <Path Data="M0.85000002,12.024963 L10.449994,10.225 21.550007,16.524876 20.050005,24.224744 8.986722,25.410996 0.14999351,18.762501 z M0.04998816,19.711001 L8.4249951,26.212509 8.1750003,28.062011 0,21.360691 z M9.2999974,26.42331 L20.075005,25.26201 20.95,28.21287 9.0000036,28.624 z M20.925,24.474809 L21.524998,27.075002 23.774999,20.273994 22.325006,17.412006 z M32.075008,15.037739 L32.950002,17.988741 23.775,18.263 22.504104,16.069314 z M34.32501,7.1873536 L35.775001,10.049481 33.524999,16.850817 32.925003,14.250498 z M22.449998,3.8146973E-07 L33.550008,6.3001808 32.050009,14.000421 21.34295,15.148535 11.975,9.7752678 12.850006,1.8000494 z" Fill="#FFC7844D" Stretch="Uniform" Grid.Column="3"/>
                         <TextBlock TextWrapping="Wrap" Text="{Binding Bauxite}" d:LayoutOverrides="Width, Height" Grid.Column="4" HorizontalAlignment="Right" FontSize="14.667" VerticalAlignment="Center"/>
                     </Grid>
-                    <Grid Margin="5,5,15,5">
+                    <Grid Margin="5,5,15,5" Height="18">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="15"/>
+                            <ColumnDefinition Width="18"/>
                             <ColumnDefinition Width="60"/>
                         </Grid.ColumnDefinitions>
-                        <Ellipse Fill="#FFA2C08B" Height="15" Stroke="#FFA2C08B" VerticalAlignment="Center" Width="15"/>
+                        <Path Data="M6.3108872E-30,4.1030015 L3.3666228,25.8279 C9.4233457,29.045308 15.565663,29.127849 21.800335,25.8279 L25.400002,4.1030015 C19.533668,10.736336 5.8247606,10.638561 6.3108872E-30,4.1030015 z M0.53400284,3.1024193 C8.6425927,-0.99357788 16.763303,-0.98370911 24.867,2.8356944 23.730169,4.0349751 22.529176,5.0011815 21.200334,5.5029586 15.308794,3.6684347 9.5866673,3.640014 4.0670011,5.7700066 2.9250013,5.2639936 1.7387949,4.2830441 0.53400284,3.1024193 z M5.1420025,6.415456 C10.511568,8.782226 15.012181,8.6718045 20.241998,6.2154717 14.942829,4.6546567 10.442839,4.7750539 5.1420025,6.415456 z" Fill="#FFA2C08B" Stretch="Uniform"/>
                         <TextBlock TextWrapping="Wrap" Text="{Binding RepairTool}" d:LayoutOverrides="Width, Height" Grid.Column="1" HorizontalAlignment="Right" FontSize="14.667" VerticalAlignment="Center"/>
                     </Grid>
                 </WrapPanel>
