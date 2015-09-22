@@ -39,7 +39,7 @@ namespace MaterialChartPlugin
                 // このクラスの何らかのメンバーにアクセスされたら読み込み
                 // 読み込みに失敗したら例外が投げられてプラグインだけが死ぬ（はず）
                 System.Reflection.Assembly.LoadFrom("protobuf-net.dll");
-                System.Reflection.Assembly.LoadFrom("Sparrow.Chart.Wpf.40.dll");
+                System.Reflection.Assembly.LoadFrom("System.Windows.Controls.DataVisualization.Toolkit.dll");
             }
             catch (Exception ex)
             {
