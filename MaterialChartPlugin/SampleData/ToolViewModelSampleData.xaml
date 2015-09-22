@@ -4,16 +4,13 @@
                           xmlns:Messaging="clr-namespace:Livet.Messaging;assembly=Livet" 
                           Ammunition="5882"
                           Bauxite="3965"
-                          Fuel="6679" 
+                          Fuel="237435" 
                           RepairTool="168"
                           Steel="5377" 
-                          XInterval="0.25"
                           XMin="2015/09/10 3:00:00" 
                           XMax="2015/09/11 3:00:00"
-                          YMin="0" 
                           YMax1="8000"
-                          YMax2="200"
-                          MinorTicksCount="3">
+                          YMax2="200">
 	<ViewModels:ToolViewModel.AmmunitionSeries>
         <Models:ChartPoint X="2015/09/10 3:00:00" Y="5964"/>
         <Models:ChartPoint X="2015/09/10 4:00:00" Y="6177"/>
