@@ -60,6 +60,7 @@ namespace MaterialChartPlugin.Models
             this.Log = new MaterialLog(plugin);
 
             KanColleClient.Current
+                // KanColleClientのIsStartedがtrueに変更されたら資材データの購読を開始
                 .Subscribe(nameof(KanColleClient.IsStarted), () =>
                 {
                     var materials = KanColleClient.Current.Homeport.Materials;

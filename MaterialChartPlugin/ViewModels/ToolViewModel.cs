@@ -168,23 +168,6 @@ namespace MaterialChartPlugin.ViewModels
         }
         #endregion
 
-        #region YMin変更通知プロパティ
-        private double _YMin;
-
-        public double YMin
-        {
-            get
-            { return _YMin; }
-            set
-            {
-                if (_YMin == value)
-                    return;
-                _YMin = value;
-                RaisePropertyChanged();
-            }
-        }
-        #endregion
-
         #region YMax1変更通知プロパティ
         private double _YMax1;
 
@@ -219,110 +202,11 @@ namespace MaterialChartPlugin.ViewModels
         }
         #endregion
 
-        #region XInterval変更通知プロパティ
-        private TimeSpan _XInterval;
-
-        public TimeSpan XInterval
-        {
-            get
-            { return _XInterval; }
-            set
-            {
-                if (_XInterval == value)
-                    return;
-                _XInterval = value;
-                RaisePropertyChanged();
-            }
-        }
-        #endregion
-        // TODO: YIntervalバインディング
-        #region YInterval1変更通知プロパティ
-        private double _YInterval1;
-
-        public double YInterval1
-        {
-            get
-            { return _YInterval1; }
-            set
-            {
-                if (_YInterval1 == value)
-                    return;
-                _YInterval1 = value;
-                RaisePropertyChanged();
-            }
-        }
-        #endregion
-
-        #region YInterval2変更通知プロパティ
-        private double _YInterval2;
-
-        public double YInterval2
-        {
-            get
-            { return _YInterval2; }
-            set
-            {
-                if (_YInterval2 == value)
-                    return;
-                _YInterval2 = value;
-                RaisePropertyChanged();
-            }
-        }
-        #endregion
-
-        #region DateTimeLabelFormat変更通知プロパティ
-        private string _DateTimeLabelFormat;
-
-        public string DateTimeLabelFormat
-        {
-            get
-            { return _DateTimeLabelFormat; }
-            set
-            {
-                if (_DateTimeLabelFormat == value)
-                    return;
-                _DateTimeLabelFormat = value;
-                RaisePropertyChanged();
-            }
-        }
-        #endregion
-
-        #region MinorTicksCount変更通知プロパティ
-        private int _MinorTicksCount;
-
-        public int MinorTicksCount
-        {
-            get
-            { return _MinorTicksCount; }
-            set
-            {
-                if (_MinorTicksCount == value)
-                    return;
-                _MinorTicksCount = value;
-                RaisePropertyChanged();
-            }
-        }
-        #endregion
-
-        #region XAxisVisibility変更通知プロパティ
-        private Visibility _XAxisVisibility = Visibility.Visible;
-
-        public Visibility XAxisVisibility
-        {
-            get
-            { return _XAxisVisibility; }
-            set
-            {
-                if (_XAxisVisibility == value)
-                    return;
-                _XAxisVisibility = value;
-                RaisePropertyChanged();
-            }
-        }
-        #endregion
-
-
         public IReadOnlyCollection<DisplayViewModel<DisplayedPeriod>> DisplayedPeriods { get; }
+
+        int mostMaterial = 0;
+
+        int mostRepairTool = 0;
 
         PropertyChangedEventListener managerChangedListener;
 
@@ -343,20 +227,6 @@ namespace MaterialChartPlugin.ViewModels
                 DisplayViewModel.Create(DisplayedPeriod.OneYear, "1年"),
                 DisplayViewModel.Create(DisplayedPeriod.ThreeYears, "3年")
             };
-
-            managerChangedListener = new PropertyChangedEventListener(materialManager)
-                    {
-                        { nameof(materialManager.Fuel),  (_,__) => RaisePropertyChanged(nameof(Fuel)) },
-                        { nameof(materialManager.Ammunition),  (_,__) => RaisePropertyChanged(nameof(Ammunition)) },
-                        { nameof(materialManager.Steel),  (_,__) => RaisePropertyChanged(nameof(Steel)) },
-                        { nameof(materialManager.Bauxite),  (_,__) => RaisePropertyChanged(nameof(Bauxite)) },
-                        { nameof(materialManager.RepairTool),  (_,__) => RaisePropertyChanged(nameof(RepairTool)) },
-                        {
-                            nameof(materialManager.IsAvailable),
-                            (_,__) => ChartSettings.DisplayedPeriod.Subscribe(___ => RefleshData()).AddTo(this)
-                        }
-                    };
-
         }
 
         public async void Initialize()
@@ -371,7 +241,22 @@ namespace MaterialChartPlugin.ViewModels
                     { nameof(materialManager.Log.HasLoaded), (_, __) => RefleshData() }
                 };
 
-            // データ更新
+            // 資材データの通知設定
+            managerChangedListener = new PropertyChangedEventListener(materialManager)
+                    {
+                        { nameof(materialManager.Fuel),  (_,__) => RaisePropertyChanged(nameof(Fuel)) },
+                        { nameof(materialManager.Ammunition),  (_,__) => RaisePropertyChanged(nameof(Ammunition)) },
+                        { nameof(materialManager.Steel),  (_,__) => RaisePropertyChanged(nameof(Steel)) },
+                        { nameof(materialManager.Bauxite),  (_,__) => RaisePropertyChanged(nameof(Bauxite)) },
+                        { nameof(materialManager.RepairTool),  (_,__) => RaisePropertyChanged(nameof(RepairTool)) },
+                        {
+                            // materialManagerの初期化が完了したら初回データ更新を行うよう設定
+                            nameof(materialManager.IsAvailable),
+                            (_,__) => ChartSettings.DisplayedPeriod.Subscribe(___ => RefleshData()).AddTo(this)
+                        }
+                    };
+
+            // データ更新設定
             Observable.FromEvent<NotifyCollectionChangedEventHandler, NotifyCollectionChangedEventArgs>
                 (h => (sender, e) => h(e), h => history.CollectionChanged += h, h => history.CollectionChanged -= h)
                 .Where(_ => materialManager.Log.HasLoaded)
@@ -379,16 +264,20 @@ namespace MaterialChartPlugin.ViewModels
                 .Subscribe(_ => UpdateData(history.Last()));
         }
 
-        public void UpdateData(TimeMaterialsPair data)
+        /// <summary>
+        /// グラフに新しいデータを追加します。
+        /// </summary>
+        /// <param name="newData"></param>
+        public void UpdateData(TimeMaterialsPair newData)
         {
-            SetXAxis(data);
-            SetMaterialYAxis(data);
-            SetRepairToolYAxis(data);
-            AddChartData(data);
+            SetXAxis(newData);
+            SetMaterialYAxis(Math.Max(this.mostMaterial, newData.MostMaterial));
+            SetRepairToolYAxis(Math.Max(this.mostRepairTool, newData.RepairTool));
+            AddChartData(newData);
         }
 
         /// <summary>
-        /// グラフのデータをアップデートします。
+        /// グラフのデータをリフレッシュします。
         /// </summary>
         public void RefleshData()
         {
@@ -404,8 +293,8 @@ namespace MaterialChartPlugin.ViewModels
                 .ToArray();
 
             SetXAxis(neededData[neededData.Length - 1]);
-            SetMaterialYAxis(neededData);
-            SetRepairToolYAxis(neededData);
+            SetMaterialYAxis(neededData.Max(p => p.MostMaterial));
+            SetRepairToolYAxis(neededData.Max(p => p.RepairTool));
             RefleshChartData(neededData);
         }
 
@@ -436,21 +325,20 @@ namespace MaterialChartPlugin.ViewModels
         /// <param name="neededData"></param>
         private void RefleshChartData(TimeMaterialsPair[] neededData)
         {
-
-            var fuel = new ObservableCollection<ChartPoint>();
-            var ammunition = new ObservableCollection<ChartPoint>();
-            var steel = new ObservableCollection<ChartPoint>();
-            var bauxite = new ObservableCollection<ChartPoint>();
-            var repairTool = new ObservableCollection<ChartPoint>();
+            var fuels = new ObservableCollection<ChartPoint>();
+            var ammunitions = new ObservableCollection<ChartPoint>();
+            var steels = new ObservableCollection<ChartPoint>();
+            var bauxites = new ObservableCollection<ChartPoint>();
+            var repairTools = new ObservableCollection<ChartPoint>();
             var storableLimit = new ObservableCollection<ChartPoint>();
 
             foreach (var data in neededData)
             {
-                fuel.Add(new ChartPoint(data.DateTime, data.Fuel));
-                ammunition.Add(new ChartPoint(data.DateTime, data.Ammunition));
-                steel.Add(new ChartPoint(data.DateTime, data.Steel));
-                bauxite.Add(new ChartPoint(data.DateTime, data.Bauxite));
-                repairTool.Add(new ChartPoint(data.DateTime, data.RepairTool));
+                fuels.Add(new ChartPoint(data.DateTime, data.Fuel));
+                ammunitions.Add(new ChartPoint(data.DateTime, data.Ammunition));
+                steels.Add(new ChartPoint(data.DateTime, data.Steel));
+                bauxites.Add(new ChartPoint(data.DateTime, data.Bauxite));
+                repairTools.Add(new ChartPoint(data.DateTime, data.RepairTool));
             }
 
             var currentDateTime = neededData[neededData.Length - 1].DateTime;
@@ -459,11 +347,11 @@ namespace MaterialChartPlugin.ViewModels
                 materialManager.StorableMaterialLimit));
             storableLimit.Add(new ChartPoint(currentDateTime, materialManager.StorableMaterialLimit));
 
-            this.FuelSeries = fuel;
-            this.AmmunitionSeries = ammunition;
-            this.SteelSeries = steel;
-            this.BauxiteSeries = bauxite;
-            this.RepairToolSeries = repairTool;
+            this.FuelSeries = fuels;
+            this.AmmunitionSeries = ammunitions;
+            this.SteelSeries = steels;
+            this.BauxiteSeries = bauxites;
+            this.RepairToolSeries = repairTools;
             this.StorableLimitSeries = storableLimit;
         }
 
@@ -472,129 +360,31 @@ namespace MaterialChartPlugin.ViewModels
         /// </summary>
         private void SetXAxis(TimeMaterialsPair newData)
         {
-            // 不可視にしないと更新の度描画するせいか死ぬほど遅くなる
-            XAxisVisibility = Visibility.Collapsed;
-
             // X軸
-            DateTimeLabelFormat = ChartUtilities.GetDateTimeFormat(ChartSettings.DisplayedPeriod);
             XMin = newData.DateTime - ChartSettings.DisplayedPeriod.Value.ToTimeSpan();
             XMax = newData.DateTime;
-            XInterval = ChartUtilities.GetInterval(ChartSettings.DisplayedPeriod);
-            // バインディングされたこいつの値を更新すると死ぬ（原因不明）
-            //MinorTicksCount = ChartUtilities.GetMynorTicks(ChartSettings.DisplayedPeriod);
-
-            XAxisVisibility = Visibility.Visible;
         }
 
         /// <summary>
         /// 資材グラフのY軸の設定を行います。
         /// </summary>
-        /// <param name="newData"></param>
-        private void SetMaterialYAxis(TimeMaterialsPair newData)
+        /// <param name="mostMaterial">最も多い資材の量</param>
+        private void SetMaterialYAxis(int mostMaterial)
         {
-            var yMaxValue1 = Math.Max(Math.Max(Math.Max(Math.Max((int)(YMax1 * 0.99), newData.Fuel),
-                newData.Ammunition), newData.Steel), newData.Bauxite);
-            var interval = ChartUtilities.GetInterval(0, yMaxValue1);
-            YMin = 0;
-
-            // Y軸のメモリ数が6個を超えるとRaisePropertyChanged()内でSparrowChartが応答しなくなる
-            var hasIntervalUpdated = false;
-            var yMax = ChartUtilities.GetYAxisMax(yMaxValue1, interval);
-
-            if (yMax / YInterval1 >= 6)
-            {
-                YInterval1 = interval;
-                hasIntervalUpdated = true;
-            }
-            YMax1 = yMax;
-
-            if (!hasIntervalUpdated)
-                YInterval1 = interval;
-
-            //YMax1 = ChartUtilities.GetYAxisMax(yMaxValue1, interval);
-            //YInterval1 = interval;
-        }
-
-        /// <summary>
-        /// 資材グラフのY軸の設定を行います。
-        /// </summary>
-        /// <param name="neededData"></param>
-        private void SetMaterialYAxis(TimeMaterialsPair[] neededData)
-        {
-            var yMaxValue1 = neededData.Max(p => Math.Max(Math.Max(Math.Max(p.Fuel, p.Ammunition), p.Steel), p.Bauxite));
-            var interval = ChartUtilities.GetInterval(0, yMaxValue1);
-            YMin = 0;
-
-            // Y軸のメモリ数が6個を超えるとRaisePropertyChanged()内でSparrowChartが応答しなくなる
-            var hasIntervalUpdated = false;
-            var yMax = ChartUtilities.GetYAxisMax(yMaxValue1, interval);
-
-            if (yMax / YInterval1 >= 6)
-            {
-                YInterval1 = interval;
-                hasIntervalUpdated = true;
-            }
-            YMax1 = yMax;
-
-            if (!hasIntervalUpdated)
-                YInterval1 = interval;
-
-
-            //YMax1 = ChartUtilities.GetYAxisMax(yMaxValue1, interval);
-            //YInterval1 = interval;
+            this.mostMaterial = mostMaterial;
+            var interval = ChartUtilities.GetInterval(0, mostMaterial);
+            YMax1 = ChartUtilities.GetYAxisMax(mostMaterial, interval);
         }
 
         /// <summary>
         /// 高速修復材グラフのY軸の設定を行います。
         /// </summary>
-        /// <param name="newData"></param>
-        private void SetRepairToolYAxis(TimeMaterialsPair newData)
+        /// <param name="mostRepairTool">最も多い高速修復材の量</param>
+        private void SetRepairToolYAxis(int mostRepairTool)
         {
-            var yMaxValue2 = Math.Max((int)(YMax2 * 0.99), newData.RepairTool);
-            var interval = ChartUtilities.GetInterval(0, yMaxValue2);
-
-            var hasIntervalUpdated = false;
-            var yMax = ChartUtilities.GetYAxisMax(yMaxValue2, interval);
-
-            if (yMax / YInterval2 >= 6)
-            {
-                YInterval2 = interval;
-                hasIntervalUpdated = true;
-            }
-            YMax2 = yMax;
-
-            if (!hasIntervalUpdated)
-                YInterval2 = interval;
-
-
-            //YMax2 = ChartUtilities.GetYAxisMax(yMaxValue2, interval);
-            //YInterval2 = interval;
-        }
-
-        /// <summary>
-        /// 高速修復材グラフのY軸の設定を行います。
-        /// </summary>
-        /// <param name="neededData"></param>
-        private void SetRepairToolYAxis(TimeMaterialsPair[] neededData)
-        {
-            var yMaxValue2 = neededData.Max(p => p.RepairTool);
-            var interval = ChartUtilities.GetInterval(0, yMaxValue2);
-
-            var hasIntervalUpdated = false;
-            var yMax = ChartUtilities.GetYAxisMax(yMaxValue2, interval);
-
-            if (yMax / YInterval2 >= 6)
-            {
-                YInterval2 = interval;
-                hasIntervalUpdated = true;
-            }
-            YMax2 = yMax;
-
-            if (!hasIntervalUpdated)
-                YInterval2 = interval;
-
-            //YMax2 = ChartUtilities.GetYAxisMax(yMaxValue2, yInterval2);
-            //YInterval2 = yInterval2;
+            this.mostRepairTool = RepairTool;
+            var interval = ChartUtilities.GetInterval(0, mostRepairTool);
+            YMax2 = ChartUtilities.GetYAxisMax(mostRepairTool, interval);
         }
 
         public async void ExportAsCsv()
@@ -602,5 +392,4 @@ namespace MaterialChartPlugin.ViewModels
             await materialManager.Log.ExportAsCsvAsync();
         }
     }
-
 }
