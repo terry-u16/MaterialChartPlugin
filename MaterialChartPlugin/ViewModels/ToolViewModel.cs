@@ -313,7 +313,7 @@ namespace MaterialChartPlugin.ViewModels
             var currentDateTime = data.DateTime;
 
             var storableLimit = new ObservableCollection<ChartPoint>();
-            storableLimit.Add(new ChartPoint(currentDateTime - TimeSpan.FromDays(365 * 3),
+            storableLimit.Add(new ChartPoint(currentDateTime - ChartSettings.DisplayedPeriod.Value.ToTimeSpan(),
                 materialManager.StorableMaterialLimit));
             storableLimit.Add(new ChartPoint(currentDateTime, materialManager.StorableMaterialLimit));
             this.StorableLimitSeries = storableLimit;
@@ -343,7 +343,7 @@ namespace MaterialChartPlugin.ViewModels
 
             var currentDateTime = neededData[neededData.Length - 1].DateTime;
 
-            storableLimit.Add(new ChartPoint(currentDateTime - TimeSpan.FromDays(365 * 3),
+            storableLimit.Add(new ChartPoint(currentDateTime - ChartSettings.DisplayedPeriod.Value.ToTimeSpan(),
                 materialManager.StorableMaterialLimit));
             storableLimit.Add(new ChartPoint(currentDateTime, materialManager.StorableMaterialLimit));
 
