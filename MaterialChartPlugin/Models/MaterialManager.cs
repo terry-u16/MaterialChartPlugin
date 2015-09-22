@@ -89,7 +89,6 @@ namespace MaterialChartPlugin.Models
                         {
                             if (Log.HasLoaded)
                             {
-                                // 将来のため一応全部ログ取っておく
                                 Log.History.Add(new TimeMaterialsPair(DateTime.Now, Fuel, Ammunition, Steel, Bauxite, RepairTool,
                                     materials.DevelopmentMaterials, materials.InstantBuildMaterials, materials.ImprovementMaterials));
                                 await Log.SaveAsync();
