@@ -119,8 +119,8 @@
                 <Setter Property="Y2" Value="4"/>
             </Style>
             <Style x:Key="DateTimeAxisLabelStyle" TargetType="{x:Type chartingToolkit:DateTimeAxisLabel}">
-                <Setter Property="YearsIntervalStringFormat" Value="{}{0:yyyy/MM/dd}"/>
-                <Setter Property="MonthsIntervalStringFormat" Value="{}{0:yyyy/MM/dd}"/>
+                <Setter Property="YearsIntervalStringFormat" Value="{}{0:\'yy/MM}"/>
+                <Setter Property="MonthsIntervalStringFormat" Value="{}{0:\'yy/MM}"/>
                 <Setter Property="WeeksIntervalStringFormat" Value="{}{0:MM/dd}"/>
                 <Setter Property="DaysIntervalStringFormat" Value="{}{0:MM/dd}"/>
                 <Setter Property="HoursIntervalStringFormat" Value="{}{0:HH:mm}"/>
