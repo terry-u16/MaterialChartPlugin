@@ -26,46 +26,4 @@
         <ResourceDictionary Source="pack://application:,,,/KanColleViewer.Controls;component/Styles/Controls.TabControl.xaml" />
         <ResourceDictionary Source="pack://application:,,,/KanColleViewer.Controls;component/Styles/Controls.Text.xaml" />
     </ResourceDictionary.MergedDictionaries>
-
-    <Style TargetType="{x:Type Line}" x:Key="AxisLineStyle">
-        <Setter Property="Stroke" Value="{DynamicResource HighlightBorderBrushKey}"/>
-        <Setter Property="StrokeThickness" Value="1"/>
-    </Style>
-    <Style TargetType="{x:Type Line}" x:Key="majorLineStyle">
-        <Setter Property="Stroke" Value="{DynamicResource HighlightBorderBrushKey}"/>
-        <Setter Property="StrokeThickness" Value="1"/>
-    </Style>
-    <Style TargetType="{x:Type Line}" x:Key="minorLineStyle">
-        <Setter Property="Stroke" Value="{DynamicResource HighlightBorderBrushKey}"/>
-        <Setter Property="StrokeThickness" Value="0.25"/>
-    </Style>
-    <Style TargetType="{x:Type Line}" x:Key="crossLineStyle">
-        <Setter Property="Stroke" Value="{DynamicResource HighlightBorderBrushKey}"/>
-        <Setter Property="StrokeThickness" Value="0.5"/>
-    </Style>
-
-    <Style TargetType="{x:Type Line}" x:Key="minorCrossLineStyle">
-        <Setter Property="Stroke" Value="{DynamicResource HighlightBorderBrushKey}"/>
-        <Setter Property="StrokeThickness" Value="0.25"/>
-    </Style>
-
-    <Style TargetType="{x:Type Border}" x:Key="containerBorderStyle">
-        <Setter Property="BorderBrush" Value="{DynamicResource HighlightBorderBrushKey}"/>
-        <Setter Property="BorderThickness" Value="1"/>
-    </Style>
-    
-    <!-- ヘッダーの類いは不要なのでCollapsedにしておく -->
-    <DataTemplate x:Key="yAxisHeaderTemplate">
-        <TextBlock Text="{Binding}" FontSize="12" FontWeight="Bold" Visibility="Collapsed">
-            <TextBlock.RenderTransform>
-                <RotateTransform Angle="270"/>
-            </TextBlock.RenderTransform>
-        </TextBlock>
-    </DataTemplate>
-    <DataTemplate x:Key="xAxisHeaderTemplate">
-        <TextBlock Text="{Binding}" FontSize="12" FontWeight="Bold" Visibility="Collapsed"/>
-    </DataTemplate>
-    <DataTemplate x:Key="legendTitleTemplate">
-        <TextBlock Text="{Binding}" FontSize="12" FontWeight="Bold" TextAlignment="Center" Visibility="Collapsed"/>
-    </DataTemplate>
 </ResourceDictionary>
