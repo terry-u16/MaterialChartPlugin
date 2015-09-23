@@ -135,7 +135,7 @@ namespace MaterialChartPlugin.ViewModels
         #endregion
 
         #region XMin変更通知プロパティ
-        private DateTime _XMin;
+        private DateTime _XMin = DateTime.Now - TimeSpan.FromDays(1);
 
         public DateTime XMin
         {
@@ -152,7 +152,7 @@ namespace MaterialChartPlugin.ViewModels
         #endregion
 
         #region XMax変更通知プロパティ
-        private DateTime _XMax;
+        private DateTime _XMax = DateTime.Now;
 
         public DateTime XMax
         {
@@ -169,7 +169,7 @@ namespace MaterialChartPlugin.ViewModels
         #endregion
 
         #region YMax1変更通知プロパティ
-        private double _YMax1;
+        private double _YMax1 = 1000;
 
         public double YMax1
         {
@@ -186,7 +186,7 @@ namespace MaterialChartPlugin.ViewModels
         #endregion
 
         #region YMax2変更通知プロパティ
-        private double _YMax2;
+        private double _YMax2 = 100;
 
         public double YMax2
         {

@@ -15,7 +15,7 @@
              Background="{DynamicResource ThemeBrushKey}"
              Foreground="{DynamicResource ActiveForegroundBrushKey}"
              mc:Ignorable="d" 
-             d:DesignHeight="600" d:DesignWidth="500" d:DataContext="{d:DesignData /SampleData/ToolViewModelSampleData.xaml}">
+             d:DesignHeight="600" d:DesignWidth="600" d:DataContext="{d:DesignData /SampleData/ToolViewModelSampleData.xaml}">
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -105,7 +105,7 @@
                             <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Padding="5,0">
                                 <Primitives:EdgePanel x:Name="ChartArea" Style="{TemplateBinding ChartAreaStyle}">
                                     <Grid Style="{TemplateBinding PlotAreaStyle}" Panel.ZIndex="-1"/>
-                                    <Border BorderBrush="{DynamicResource BorderBrushKey}" BorderThickness="1" Panel.ZIndex="10"/>
+                                    <Border BorderBrush="{DynamicResource HighlightBorderBrushKey}" BorderThickness="1" Panel.ZIndex="10"/>
                                 </Primitives:EdgePanel>
                             </Border>
                         </ControlTemplate>
@@ -114,9 +114,12 @@
             </Style>
 
             <Style x:Key="MajorTickStyle" TargetType="{x:Type Line}">
-                <Setter Property="Stroke" Value="{DynamicResource BorderBrushKey}"/>
+                <Setter Property="Stroke" Value="{DynamicResource HighlightBorderBrushKey}"/>
                 <Setter Property="X2" Value="4"/>
                 <Setter Property="Y2" Value="4"/>
+            </Style>
+            <Style x:Key="GridLineStyle" TargetType="{x:Type Line}">
+                <Setter Property="Stroke" Value="{DynamicResource BorderBrushKey}"/>
             </Style>
             <Style x:Key="DateTimeAxisLabelStyle" TargetType="{x:Type chartingToolkit:DateTimeAxisLabel}">
                 <Setter Property="YearsIntervalStringFormat" Value="{}{0:\'yy/MM}"/>
@@ -131,11 +134,11 @@
         <StackPanel Margin="12,0,12,12">
             <Border BorderBrush="{DynamicResource BorderBrushKey}" BorderThickness="0,0,0,1" Padding="0,10" >
                 <WrapPanel VerticalAlignment="Top" Margin="0" HorizontalAlignment="Left">
-                    <Grid Margin="5,5,15,5" Height="18">
+                    <Grid Margin="5,5,20,5" Height="18">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="18"/>
                             <ColumnDefinition Width="60"/>
-                            <ColumnDefinition Width="15"/>
+                            <ColumnDefinition Width="20"/>
                             <ColumnDefinition Width="18"/>
                             <ColumnDefinition Width="60"/>
                         </Grid.ColumnDefinitions>
@@ -144,11 +147,11 @@
                         <Path Data="M0,10.649461 L8.8213333,17.728667 25.137699,22.795001 C23.89425,20.587002 25.69425,14.187002 27.871,13.328669 L11.954667,9.0620003 0.250497,9.6494848 z M25.935383,18.008252 C26.579218,15.751495 28.044053,13.537293 28.772571,13.761745 29.307201,13.926462 29.539472,16.62745 28.806286,18.926592 28.021321,21.3881 26.637166,23.29144 26.069213,23.124843 25.50126,22.958247 25.318079,20.172016 25.935383,18.008252 z M27.842591,12.480495 C27.842591,12.480495 27.842591,12.480495 27.842591,12.480495 z M31.695725,4.6862061 C31.74663,4.6817667 31.795039,4.6862695 31.840571,4.7002993 32.375201,4.8650354 32.607472,7.5663414 31.874285,9.8657541 31.138383,12.17369 30.229669,13.88814 29.60675,13.969 L29.53175,13.51875 C29.415083,13.13514 29.18175,12.794209 28.68175,12.794209 28.657928,12.794209 28.65675,12.594201 28.65675,12.594201 28.545887,11.549093 28.636859,10.232192 29.003384,8.9473052 29.606978,6.8313472 30.932154,4.7527942 31.695725,4.6862061 z M15.022667,2.7465819E-07 L30.939,4.2671714 C29.102366,4.9914755 27.533948,9.6614348 27.835568,12.429565 L27.839732,12.459753 11.954667,8.2009662 11.345901,8.2315265 3.068,1.5876481 3.3184968,0.58755406 z" Fill="#FF9A8F61" Stretch="Uniform" Grid.Column="3"/>
                         <TextBlock TextWrapping="Wrap" Text="{Binding Ammunition}" d:LayoutOverrides="Width, Height" Grid.Column="4" HorizontalAlignment="Right" FontSize="14.667" VerticalAlignment="Center"/>
                     </Grid>
-                    <Grid Margin="5,5,15,5" Height="18">
+                    <Grid Margin="5,5,20,5" Height="18">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="18"/>
                             <ColumnDefinition Width="60"/>
-                            <ColumnDefinition Width="15"/>
+                            <ColumnDefinition Width="20"/>
                             <ColumnDefinition Width="18"/>
                             <ColumnDefinition Width="60"/>
                         </Grid.ColumnDefinitions>
@@ -157,7 +160,7 @@
                         <Path Data="M0.85000002,12.024963 L10.449994,10.225 21.550007,16.524876 20.050005,24.224744 8.986722,25.410996 0.14999351,18.762501 z M0.04998816,19.711001 L8.4249951,26.212509 8.1750003,28.062011 0,21.360691 z M9.2999974,26.42331 L20.075005,25.26201 20.95,28.21287 9.0000036,28.624 z M20.925,24.474809 L21.524998,27.075002 23.774999,20.273994 22.325006,17.412006 z M32.075008,15.037739 L32.950002,17.988741 23.775,18.263 22.504104,16.069314 z M34.32501,7.1873536 L35.775001,10.049481 33.524999,16.850817 32.925003,14.250498 z M22.449998,3.8146973E-07 L33.550008,6.3001808 32.050009,14.000421 21.34295,15.148535 11.975,9.7752678 12.850006,1.8000494 z" Fill="#FFC7844D" Stretch="Uniform" Grid.Column="3"/>
                         <TextBlock TextWrapping="Wrap" Text="{Binding Bauxite}" d:LayoutOverrides="Width, Height" Grid.Column="4" HorizontalAlignment="Right" FontSize="14.667" VerticalAlignment="Center"/>
                     </Grid>
-                    <Grid Margin="5,5,15,5" Height="18">
+                    <Grid Margin="5,5,20,5" Height="18">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="18"/>
                             <ColumnDefinition Width="60"/>
@@ -184,19 +187,19 @@
 
             <chartingToolkit:Chart Height="200" Style="{DynamicResource MaterialChartStyle}" Margin="0,20,0,0" >
                 <chartingToolkit:Chart.Axes>
-                    <chartingToolkit:DateTimeAxis Orientation="X" Minimum="{Binding XMin}" Maximum="{Binding XMax}" MajorTickMarkStyle="{DynamicResource MajorTickStyle}" Location="Bottom" AxisLabelStyle="{StaticResource DateTimeAxisLabelStyle}"/>
-                    <chartingToolkit:LinearAxis Orientation="Y" Minimum="0" Maximum="{Binding YMax1}" MajorTickMarkStyle="{DynamicResource MajorTickStyle}" Location="Left"/>
+                    <chartingToolkit:DateTimeAxis Orientation="X" Minimum="{Binding XMin}" Maximum="{Binding XMax}" MajorTickMarkStyle="{DynamicResource MajorTickStyle}" Location="Bottom" AxisLabelStyle="{StaticResource DateTimeAxisLabelStyle}" GridLineStyle="{DynamicResource GridLineStyle}" ShowGridLines="True"/>
+                    <chartingToolkit:LinearAxis Orientation="Y" Minimum="0" Maximum="{Binding YMax1}" MajorTickMarkStyle="{DynamicResource MajorTickStyle}" Location="Left" ShowGridLines="True" GridLineStyle="{DynamicResource GridLineStyle}" MinWidth="40"/>
                 </chartingToolkit:Chart.Axes>
                 <chartingToolkit:AreaSeries DependentValuePath="Y" IndependentValuePath="X" ItemsSource="{Binding FuelSeries}" Title="燃料" Style="{DynamicResource SimpleAreaSeriesStyle}" BorderBrush="#FF5DA353"/>
                 <chartingToolkit:AreaSeries DependentValuePath="Y" IndependentValuePath="X" ItemsSource="{Binding AmmunitionSeries}" Title="弾薬"  Style="{DynamicResource SimpleAreaSeriesStyle}" BorderBrush="#FF9A8F61"/>
                 <chartingToolkit:AreaSeries DependentValuePath="Y" IndependentValuePath="X" ItemsSource="{Binding SteelSeries}" Title="鋼材" Style="{DynamicResource SimpleAreaSeriesStyle}" BorderBrush="#FFC9C9C9"/>
                 <chartingToolkit:AreaSeries DependentValuePath="Y" IndependentValuePath="X" ItemsSource="{Binding BauxiteSeries}" Title="ボーキサイト" Style="{DynamicResource SimpleAreaSeriesStyle}" BorderBrush="#FFC7844D"/>
-                <chartingToolkit:LineSeries DependentValuePath="Y" IndependentValuePath="X" ItemsSource="{Binding StorableLimitSeries}" Title="回復上限" Style="{DynamicResource SimpleLineSeriesStyle}" BorderBrush="#FF584C76"/>
+                <chartingToolkit:LineSeries DependentValuePath="Y" IndependentValuePath="X" ItemsSource="{Binding StorableLimitSeries}" Title="回復上限" Style="{DynamicResource SimpleLineSeriesStyle}" BorderBrush="#FF4E3876"/>
             </chartingToolkit:Chart>
             <chartingToolkit:Chart Height="200" Style="{DynamicResource MaterialChartStyle}" Margin="0,25,0,0" >
                 <chartingToolkit:Chart.Axes>
-                    <chartingToolkit:DateTimeAxis Orientation="X" Minimum="{Binding XMin}" Maximum="{Binding XMax}" MajorTickMarkStyle="{DynamicResource MajorTickStyle}" Location="Bottom" AxisLabelStyle="{StaticResource DateTimeAxisLabelStyle}"/>
-                    <chartingToolkit:LinearAxis Orientation="Y" Minimum="0" Maximum="{Binding YMax2}" MajorTickMarkStyle="{DynamicResource MajorTickStyle}" Location="Left"/>
+                    <chartingToolkit:DateTimeAxis Orientation="X" Minimum="{Binding XMin}" Maximum="{Binding XMax}" MajorTickMarkStyle="{DynamicResource MajorTickStyle}" Location="Bottom" AxisLabelStyle="{StaticResource DateTimeAxisLabelStyle}" GridLineStyle="{DynamicResource GridLineStyle}" ShowGridLines="True"/>
+                    <chartingToolkit:LinearAxis Orientation="Y" Minimum="0" Maximum="{Binding YMax2}" MajorTickMarkStyle="{DynamicResource MajorTickStyle}" Location="Left" GridLineStyle="{DynamicResource GridLineStyle}" ShowGridLines="True" MinWidth="40"/>
                 </chartingToolkit:Chart.Axes>
                 <chartingToolkit:AreaSeries DependentValuePath="Y" IndependentValuePath="X" ItemsSource="{Binding RepairToolSeries}" Title="高速修復材" Style="{DynamicResource SimpleAreaSeriesStyle}" BorderBrush="#FFA2C08B"/>
             </chartingToolkit:Chart>
