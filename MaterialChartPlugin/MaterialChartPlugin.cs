@@ -15,7 +15,7 @@ namespace MaterialChartPlugin
     [ExportMetadata("Guid", "56B66906-608A-4BCC-9FE2-6B3B0093F377")]
     [ExportMetadata("Title", "MaterialChart")]
     [ExportMetadata("Description", "資材の推移を折れ線グラフで表示します。")]
-    [ExportMetadata("Version", "0.1.0")]
+    [ExportMetadata("Version", "1.0.0")]
     [ExportMetadata("Author", "@terry_u16")]
     [Export(typeof(ITool))]
     [Export(typeof(IRequestNotify))]
