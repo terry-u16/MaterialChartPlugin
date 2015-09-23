@@ -32,13 +32,12 @@ namespace MaterialChartPlugin.Models.Utilities
                 shift *= 10;
             }
 
-            // あまり細かい目盛り幅にするとSparrowChartが応答しなくなる……
             if (difference >= 5)
-                return shift * 2;
-            else if (difference >= 2)
                 return shift;
+            else if (difference >= 2)
+                return shift / 2;
             else
-                return shift * 4 / 10;
+                return shift * 2 / 10;
         }
 
         public static TimeSpan GetInterval(DisplayedPeriod period)
