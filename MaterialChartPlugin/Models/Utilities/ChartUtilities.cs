@@ -33,11 +33,11 @@ namespace MaterialChartPlugin.Models.Utilities
             }
 
             if (difference >= 5)
-                return shift;
+                return shift * 2;
             else if (difference >= 2)
-                return shift / 2;
+                return shift;
             else
-                return shift * 2 / 10;
+                return shift * 4 / 10;
         }
     }
 }
