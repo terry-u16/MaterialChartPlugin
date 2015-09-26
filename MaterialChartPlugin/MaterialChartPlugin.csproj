@@ -171,8 +171,6 @@
     <Compile Include="Models\Utilities\ChartExtensions.cs" />
     <Compile Include="Models\Utilities\ChartUtilities.cs" />
     <Compile Include="ViewModels\ToolViewModel.cs" />
-    <Compile Include="Views\Converters\DisplayedPeriodToIntervalConverter.cs" />
-    <Compile Include="Views\Converters\DisplayedPeriodToIntervalTypeConverter.cs" />
     <Compile Include="Views\Converters\SolidBrushToTransparentBrushConverter.cs" />
     <Compile Include="Views\ToolView.xaml.cs">
       <DependentUpon>ToolView.xaml</DependentUpon>
