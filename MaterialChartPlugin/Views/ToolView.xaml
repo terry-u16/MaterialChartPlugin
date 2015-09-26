@@ -65,7 +65,7 @@
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type chartingToolkit:AreaSeries}">
                             <Canvas x:Name="PlotArea">
-                                <Path Data="{TemplateBinding Geometry}" Stroke="{TemplateBinding BorderBrush}" Fill="{TemplateBinding BorderBrush, Converter={StaticResource BorderBrushToFillBrushConverter}, ConverterParameter=0.2}" Style="{TemplateBinding PathStyle}" StrokeThickness="2"/>
+                                <Path Data="{TemplateBinding Geometry}" Stroke="{TemplateBinding BorderBrush}" Fill="{TemplateBinding BorderBrush, Converter={StaticResource BorderBrushToFillBrushConverter}, ConverterParameter=0.2}" Style="{TemplateBinding PathStyle}" StrokeThickness="2" StrokeLineJoin="Round"/>
                             </Canvas>
                         </ControlTemplate>
                     </Setter.Value>
