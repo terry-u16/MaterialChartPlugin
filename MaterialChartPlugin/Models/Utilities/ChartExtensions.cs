@@ -19,42 +19,19 @@ namespace MaterialChartPlugin.Models.Utilities
             if (log.Count() == 0)
                 yield break;
 
-            DateTime lastUpdated = DateTime.MinValue;
+            TimeSpan minimumTimeStep = GetMinimumTimeStep(period);
+            double minimumMaterialRatio = GetMinimumMaterialRatio(period);
+
+            // 最初のデータは必ず返す
+            yield return log.First();
             TimeMaterialsPair lastData = log.First();
-            TimeSpan minimumStep;
 
-            // データ数を最大でもだいたい150点くらいに抑える（わりと適当）
-            switch (period)
+            foreach (var data in log.Skip(1))
             {
-                case DisplayedPeriod.OneDay:
-                    minimumStep = TimeSpan.FromMinutes(10);
-                    break;
-                case DisplayedPeriod.OneWeek:
-                    minimumStep = TimeSpan.FromHours(1);
-                    break;
-                case DisplayedPeriod.OneMonth:
-                    minimumStep = TimeSpan.FromHours(4);
-                    break;
-                case DisplayedPeriod.ThreeMonths:
-                    minimumStep = TimeSpan.FromHours(12);
-                    break;
-                case DisplayedPeriod.OneYear:
-                    minimumStep = TimeSpan.FromDays(2);
-                    break;
-                case DisplayedPeriod.ThreeYears:
-                    minimumStep = TimeSpan.FromDays(6);
-                    break;
-                default:
-                    throw new ArgumentException("periodの値が不正です");
-            }
-
-            foreach (var data in log)
-            {
-                // 前のデータから時刻が十分離れているデータであれば値を返す
-                if (data.DateTime - lastUpdated >= minimumStep)
+                // 前のデータから時刻あるいは資材量が十分離れているデータであれば値を返す
+                if (HasSeriouslyChanged(lastData, data, minimumTimeStep, minimumMaterialRatio))
                 {
                     yield return data;
-                    lastUpdated = data.DateTime;
                     lastData = data;
                 }
             }
@@ -64,6 +41,59 @@ namespace MaterialChartPlugin.Models.Utilities
             {
                 yield return log.Last();
             }
+        }
+
+        private static TimeSpan GetMinimumTimeStep(DisplayedPeriod period)
+        {
+            // x方向の解像度は150分割くらいにしておく（わりと適当）
+            switch (period)
+            {
+                case DisplayedPeriod.OneDay:
+                    return TimeSpan.FromMinutes(10);
+                case DisplayedPeriod.OneWeek:
+                    return TimeSpan.FromHours(1);
+                case DisplayedPeriod.OneMonth:
+                    return TimeSpan.FromHours(4);
+                case DisplayedPeriod.ThreeMonths:
+                    return TimeSpan.FromHours(12);
+                case DisplayedPeriod.OneYear:
+                    return TimeSpan.FromDays(2);
+                case DisplayedPeriod.ThreeYears:
+                    return TimeSpan.FromDays(6);
+                default:
+                    throw new ArgumentException("periodの値が不正です");
+            }
+        }
+
+        private static double GetMinimumMaterialRatio(DisplayedPeriod period)
+        {
+            switch (period)
+            {
+                case DisplayedPeriod.OneDay:
+                case DisplayedPeriod.OneWeek:
+                    return 0.02;
+                case DisplayedPeriod.OneMonth:
+                    return 0.05;
+                case DisplayedPeriod.ThreeMonths:
+                    return 0.08;
+                case DisplayedPeriod.OneYear:
+                    return 0.12;
+                case DisplayedPeriod.ThreeYears:
+                    return 0.25;
+                default:
+                    throw new ArgumentException("periodの値が不正です");
+            }
+        }
+
+        private static bool HasSeriouslyChanged(TimeMaterialsPair oldData, TimeMaterialsPair newData, TimeSpan minimumTimeStep, double minimumMaterialRatio)
+        {
+            // 5%くらい変化したら大きく変わったとみてよい
+            return newData.DateTime - oldData.DateTime >= minimumTimeStep
+                || Math.Abs(newData.Fuel - oldData.Fuel) >= oldData.Fuel * minimumMaterialRatio
+                || Math.Abs(newData.Ammunition - oldData.Ammunition) >= oldData.Fuel * minimumMaterialRatio
+                || Math.Abs(newData.Steel - oldData.Steel) >= oldData.Steel * minimumMaterialRatio
+                || Math.Abs(newData.Bauxite - oldData.Bauxite) >= oldData.Bauxite * minimumMaterialRatio
+                || Math.Abs(newData.RepairTool - oldData.RepairTool) >= oldData.RepairTool * minimumMaterialRatio;
         }
 
         /// <summary>
