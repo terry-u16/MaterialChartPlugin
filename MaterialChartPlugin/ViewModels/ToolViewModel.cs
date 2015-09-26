@@ -202,8 +202,6 @@ namespace MaterialChartPlugin.ViewModels
         }
         #endregion
 
-        public DisplayedPeriod DisplayedPeriod => ChartSettings.DisplayedPeriod.Value;
-
         public IReadOnlyCollection<DisplayViewModel<DisplayedPeriod>> DisplayedPeriods { get; }
 
         int mostMaterial = 0;
@@ -252,13 +250,9 @@ namespace MaterialChartPlugin.ViewModels
                         { nameof(materialManager.Bauxite),  (_,__) => RaisePropertyChanged(nameof(Bauxite)) },
                         { nameof(materialManager.RepairTool),  (_,__) => RaisePropertyChanged(nameof(RepairTool)) },
                         {
-                            // materialManagerの初期化が完了したら、DisplayedPeriodの変更時に更新を行うよう設定
+                            // materialManagerの初期化が完了したら初回データ更新を行うよう設定
                             nameof(materialManager.IsAvailable),
-                            (_,__) => ChartSettings.DisplayedPeriod.Subscribe(___ =>
-                                {
-                                    RefleshData();
-                                    RaisePropertyChanged(nameof(DisplayedPeriod));
-                                }).AddTo(this)
+                            (_,__) => ChartSettings.DisplayedPeriod.Subscribe(___ => RefleshData()).AddTo(this)
                         }
                     };
 

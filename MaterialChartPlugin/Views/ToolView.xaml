@@ -21,8 +21,6 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="../Styles/PluginStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-            <converters:DisplayedPeriodToIntervalConverter x:Key="DisplayedPeriodToIntervalConverter"/>
-            <converters:DisplayedPeriodToIntervalTypeConverter x:Key="DisplayedPeriodToIntervalTypeConverter"/>
             <converters:SolidBrushToTransparentBrushConverter x:Key="BorderBrushToFillBrushConverter"/>
             <!-- データポイントを表示しないようにするスタイル（↓ の Simple[Line/Area]SeriesStyleで使用） -->
             <Style x:Key="EmptyLineDataPointsStyle" TargetType="{x:Type chartingToolkit:LineDataPoint}">
@@ -189,7 +187,7 @@
 
             <chartingToolkit:Chart Height="200" Style="{DynamicResource MaterialChartStyle}" Margin="0,20,0,0" >
                 <chartingToolkit:Chart.Axes>
-                    <chartingToolkit:DateTimeAxis Orientation="X" Minimum="{Binding XMin}" Maximum="{Binding XMax}" MajorTickMarkStyle="{DynamicResource MajorTickStyle}" Location="Bottom" AxisLabelStyle="{StaticResource DateTimeAxisLabelStyle}" GridLineStyle="{DynamicResource GridLineStyle}" ShowGridLines="True" IntervalType="{Binding DisplayedPeriod, Converter={StaticResource DisplayedPeriodToIntervalTypeConverter}, Mode=OneWay}" Interval="{Binding DisplayedPeriod, Converter={StaticResource DisplayedPeriodToIntervalConverter}, Mode=OneWay}"/>
+                    <chartingToolkit:DateTimeAxis Orientation="X" Minimum="{Binding XMin}" Maximum="{Binding XMax}" MajorTickMarkStyle="{DynamicResource MajorTickStyle}" Location="Bottom" AxisLabelStyle="{StaticResource DateTimeAxisLabelStyle}" GridLineStyle="{DynamicResource GridLineStyle}" ShowGridLines="True"/>
                     <chartingToolkit:LinearAxis Orientation="Y" Minimum="0" Maximum="{Binding YMax1}" MajorTickMarkStyle="{DynamicResource MajorTickStyle}" Location="Left" ShowGridLines="True" GridLineStyle="{DynamicResource GridLineStyle}" MinWidth="40"/>
                 </chartingToolkit:Chart.Axes>
                 <chartingToolkit:AreaSeries DependentValuePath="Y" IndependentValuePath="X" ItemsSource="{Binding FuelSeries}" Title="燃料" Style="{DynamicResource SimpleAreaSeriesStyle}" BorderBrush="#FF5DA353"/>
@@ -200,7 +198,7 @@
             </chartingToolkit:Chart>
             <chartingToolkit:Chart Height="200" Style="{DynamicResource MaterialChartStyle}" Margin="0,25,0,0" >
                 <chartingToolkit:Chart.Axes>
-                    <chartingToolkit:DateTimeAxis Orientation="X" Minimum="{Binding XMin}" Maximum="{Binding XMax}" MajorTickMarkStyle="{DynamicResource MajorTickStyle}" Location="Bottom" AxisLabelStyle="{StaticResource DateTimeAxisLabelStyle}" GridLineStyle="{DynamicResource GridLineStyle}" ShowGridLines="True" IntervalType="{Binding DisplayedPeriod, Converter={StaticResource DisplayedPeriodToIntervalTypeConverter}, Mode=OneWay}" Interval="{Binding DisplayedPeriod, Converter={StaticResource DisplayedPeriodToIntervalConverter}, Mode=OneWay}"/>
+                    <chartingToolkit:DateTimeAxis Orientation="X" Minimum="{Binding XMin}" Maximum="{Binding XMax}" MajorTickMarkStyle="{DynamicResource MajorTickStyle}" Location="Bottom" AxisLabelStyle="{StaticResource DateTimeAxisLabelStyle}" GridLineStyle="{DynamicResource GridLineStyle}" ShowGridLines="True"/>
                     <chartingToolkit:LinearAxis Orientation="Y" Minimum="0" Maximum="{Binding YMax2}" MajorTickMarkStyle="{DynamicResource MajorTickStyle}" Location="Left" GridLineStyle="{DynamicResource GridLineStyle}" ShowGridLines="True" MinWidth="40"/>
                 </chartingToolkit:Chart.Axes>
                 <chartingToolkit:AreaSeries DependentValuePath="Y" IndependentValuePath="X" ItemsSource="{Binding RepairToolSeries}" Title="高速修復材" Style="{DynamicResource SimpleAreaSeriesStyle}" BorderBrush="#FFA2C08B"/>

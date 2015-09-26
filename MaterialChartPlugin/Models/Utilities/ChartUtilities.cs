@@ -39,5 +39,65 @@ namespace MaterialChartPlugin.Models.Utilities
             else
                 return shift * 4 / 10;
         }
+
+        public static TimeSpan GetInterval(DisplayedPeriod period)
+        {
+            switch (period)
+            {
+                case DisplayedPeriod.OneDay:
+                    return TimeSpan.FromHours(6);
+                case DisplayedPeriod.OneWeek:
+                    return TimeSpan.FromDays(1);
+                case DisplayedPeriod.OneMonth:
+                    return TimeSpan.FromDays(7.5);
+                case DisplayedPeriod.ThreeMonths:
+                    return TimeSpan.FromDays(30);
+                case DisplayedPeriod.OneYear:
+                    return TimeSpan.FromDays(91.25);
+                case DisplayedPeriod.ThreeYears:
+                    return TimeSpan.FromDays(365);
+                default:
+                    throw new ArgumentException("periodの値が不正です");
+            }
+        }
+
+        public static int GetMynorTicks(DisplayedPeriod period)
+        {
+            switch (period)
+            {
+                case DisplayedPeriod.OneDay:
+                    return 5;
+                case DisplayedPeriod.OneWeek:
+                    return 3;
+                case DisplayedPeriod.OneMonth:
+                    return 6;
+                case DisplayedPeriod.ThreeMonths:
+                    return 2;
+                case DisplayedPeriod.OneYear:
+                    return 2;
+                case DisplayedPeriod.ThreeYears:
+                    return 3;
+                default:
+                    throw new ArgumentException("periodの値が不正です");
+            }
+        }
+
+        public static string GetDateTimeFormat(DisplayedPeriod period)
+        {
+            switch (period)
+            {
+                case DisplayedPeriod.OneDay:
+                    return "M/d H:mm";
+                case DisplayedPeriod.OneWeek:
+                case DisplayedPeriod.OneMonth:
+                    return "M/d";
+                case DisplayedPeriod.ThreeMonths:
+                case DisplayedPeriod.OneYear:
+                case DisplayedPeriod.ThreeYears:
+                    return "yyyy/M/d";
+                default:
+                    throw new ArgumentException("periodの値が不正です");
+            }
+        }
     }
 }
