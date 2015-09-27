@@ -133,7 +133,7 @@ namespace MaterialChartPlugin.Models
             catch (IOException ex)
             {
                 plugin.InvokeNotifyRequested(new Grabacr07.KanColleViewer.Composition.NotifyEventArgs(
-                    "MaterialChartPlugin.SaveFailed", "読み込み失敗",
+                    "MaterialChartPlugin.SaveFailed", "保存失敗",
                     "資材データの保存に失敗しました。必要なアクセス権限がない可能性があります。"));
                 System.Diagnostics.Debug.WriteLine(ex);
             }
