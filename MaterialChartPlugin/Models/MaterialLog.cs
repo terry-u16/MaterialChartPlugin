@@ -124,7 +124,7 @@ namespace MaterialChartPlugin.Models
 
                 // オレオレ形式でバイナリ保存とかも考えたけど
                 // 今後ネジみたいに新しい資材が入ってくると対応が面倒なのでやめた
-                using (var stream = File.OpenWrite(filePath))
+                using (var stream = new FileStream(filePath, FileMode.Create, FileAccess.Write))
                 {
                     await Task.Run(() => Serializer.Serialize(stream, History));
                 }
