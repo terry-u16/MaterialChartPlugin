@@ -14,15 +14,15 @@ namespace MaterialChartPlugin.Models
 {
     public class MaterialLog : NotificationObject
     {
-        static readonly string roamingDirectoryPath = Path.Combine(
+        static readonly string localDirectoryPath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             "terry_u16", "MaterialChartPlugin");
 
-        static readonly string exportDirectoryPath = "MaterialChartPlugin";
+        public static readonly string ExportDirectoryPath = "MaterialChartPlugin";
 
         static readonly string saveFileName = "materiallog.dat";
 
-        static string FilePath => Path.Combine(roamingDirectoryPath, saveFileName);
+        static string SaveFilePath => Path.Combine(localDirectoryPath, saveFileName);
 
         private MaterialChartPlugin plugin;
 
@@ -43,7 +43,6 @@ namespace MaterialChartPlugin.Models
         }
         #endregion
 
-
         public ObservableCollection<TimeMaterialsPair> History { get; private set; }
 
         public MaterialLog(MaterialChartPlugin plugin)
@@ -53,14 +52,22 @@ namespace MaterialChartPlugin.Models
 
         public async Task LoadAsync()
         {
-            if (File.Exists(FilePath))
+            await LoadAsync(SaveFilePath, null);
+        }
+
+        private async Task LoadAsync(string filePath, Action onSuccess)
+        {
+            this.HasLoaded = false;
+
+            if (File.Exists(filePath))
             {
                 try
                 {
-                    using (var stream = File.OpenRead(FilePath))
+                    using (var stream = File.OpenRead(filePath))
                     {
                         this.History = await Task.Run(() => Serializer.Deserialize<ObservableCollection<TimeMaterialsPair>>(stream));
                     }
+                    onSuccess?.Invoke();
                 }
                 catch (ProtoException ex)
                 {
@@ -68,7 +75,8 @@ namespace MaterialChartPlugin.Models
                         "MaterialChartPlugin.LoadFailed", "読み込み失敗",
                         "資材データの読み込みに失敗しました。データが破損している可能性があります。"));
                     System.Diagnostics.Debug.WriteLine(ex);
-                    this.History = new ObservableCollection<TimeMaterialsPair>();
+                    if (this.History == null)
+                        this.History = new ObservableCollection<TimeMaterialsPair>();
                 }
                 catch (IOException ex)
                 {
@@ -76,14 +84,16 @@ namespace MaterialChartPlugin.Models
                         "MaterialChartPlugin.LoadFailed", "読み込み失敗",
                         "資材データの読み込みに失敗しました。必要なアクセス権限がない可能性があります。"));
                     System.Diagnostics.Debug.WriteLine(ex);
-                    this.History = new ObservableCollection<TimeMaterialsPair>();
+                    if (this.History == null)
+                        this.History = new ObservableCollection<TimeMaterialsPair>();
                 }
             }
             else
             {
-                this.History = new ObservableCollection<TimeMaterialsPair>();
+                if (this.History == null)
+                    this.History = new ObservableCollection<TimeMaterialsPair>();
             }
-            
+
             this.HasLoaded = true;
         }
 
@@ -91,17 +101,34 @@ namespace MaterialChartPlugin.Models
         {
             try
             {
-                if (!Directory.Exists(roamingDirectoryPath))
+                await SaveAsync(localDirectoryPath, SaveFilePath, null);
+            }
+            catch (IOException ex)
+            {
+                plugin.InvokeNotifyRequested(new Grabacr07.KanColleViewer.Composition.NotifyEventArgs(
+                    "MaterialChartPlugin.SaveFailed", "読み込み失敗",
+                    "資材データの保存に失敗しました。必要なアクセス権限がない可能性があります。"));
+                System.Diagnostics.Debug.WriteLine(ex);
+            }
+        }
+
+        private async Task SaveAsync(string directoryPath, string filePath, Action onSuccess)
+        {
+            try
+            {
+                if (!Directory.Exists(directoryPath))
                 {
-                    Directory.CreateDirectory(roamingDirectoryPath);
+                    Directory.CreateDirectory(directoryPath);
                 }
 
                 // オレオレ形式でバイナリ保存とかも考えたけど
                 // 今後ネジみたいに新しい資材が入ってくると対応が面倒なのでやめた
-                using (var stream = File.OpenWrite(FilePath))
+                using (var stream = File.OpenWrite(filePath))
                 {
                     await Task.Run(() => Serializer.Serialize(stream, History));
                 }
+
+                onSuccess?.Invoke();
             }
             catch (IOException ex)
             {
@@ -115,13 +142,13 @@ namespace MaterialChartPlugin.Models
         public async Task ExportAsCsvAsync()
         {
             var csvFileName = CreateCsvFileName(DateTime.Now);
-            var csvFilePath = Path.Combine(exportDirectoryPath, csvFileName);
+            var csvFilePath = Path.Combine(ExportDirectoryPath, csvFileName);
 
             try
             {
-                if (!Directory.Exists(exportDirectoryPath))
+                if (!Directory.Exists(ExportDirectoryPath))
                 {
-                    Directory.CreateDirectory(exportDirectoryPath);
+                    Directory.CreateDirectory(ExportDirectoryPath);
                 }
 
                 using (var writer = new StreamWriter(csvFilePath, false, Encoding.UTF8))
@@ -135,7 +162,7 @@ namespace MaterialChartPlugin.Models
                 }
 
                 plugin.InvokeNotifyRequested(new Grabacr07.KanColleViewer.Composition.NotifyEventArgs(
-                    "MaterialChartPlugin.ExportCompleted", "エクスポート完了",
+                    "MaterialChartPlugin.CsvExportCompleted", "エクスポート完了",
                     $"資材データがエクスポートされました: {csvFilePath}")
                 {
                     Activated = () =>
@@ -153,9 +180,42 @@ namespace MaterialChartPlugin.Models
             }
         }
 
+        public async Task ImportAsync(string filePath)
+        {
+            await LoadAsync(filePath, ()=>
+                plugin.InvokeNotifyRequested(new Grabacr07.KanColleViewer.Composition.NotifyEventArgs(
+                    "MaterialChartPlugin.ImportComplete", "インポート完了",
+                    "資材データのインポートに成功しました。"))
+                );
+
+            await SaveAsync();
+        }
+
+        public async Task ExportAsync()
+        {
+            var fileName = CreateExportedFileName(DateTime.Now);
+            var filePath = Path.Combine(ExportDirectoryPath, fileName);
+            await SaveAsync(ExportDirectoryPath, filePath, () =>
+                plugin.InvokeNotifyRequested(new Grabacr07.KanColleViewer.Composition.NotifyEventArgs(
+                    "MaterialChartPlugin.ExportComplete", "エクスポート完了",
+                    $"資材データがエクスポートされました: {filePath}")
+                {
+                    Activated = () =>
+                    {
+                        System.Diagnostics.Process.Start("EXPLORER.EXE", $"/select,\"\"{filePath}\"\"");
+                    }
+                })
+            );
+        }
+
         private string CreateCsvFileName(DateTime dateTime)
         {
             return $"MaterialChartPlugin-{dateTime.ToString("yyMMdd-HHmmssff")}.csv";
+        }
+
+        private string CreateExportedFileName(DateTime dateTime)
+        {
+            return $"MaterialChartPlugin-BackUp-{dateTime.ToString("yyMMdd-HHmmssff")}.dat";
         }
     }
 }
