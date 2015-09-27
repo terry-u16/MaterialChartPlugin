@@ -13,6 +13,7 @@ using MaterialChartPlugin.Models.Settings;
 using MaterialChartPlugin.Models.Utilities;
 using System.Reactive.Linq;
 using System.Windows;
+using Microsoft.Win32;
 
 namespace MaterialChartPlugin.ViewModels
 {
@@ -202,6 +203,8 @@ namespace MaterialChartPlugin.ViewModels
         }
         #endregion
 
+        public DisplayedPeriod DisplayedPeriod => ChartSettings.DisplayedPeriod.Value;
+
         public IReadOnlyCollection<DisplayViewModel<DisplayedPeriod>> DisplayedPeriods { get; }
 
         int mostMaterial = 0;
@@ -238,7 +241,12 @@ namespace MaterialChartPlugin.ViewModels
             // データ初期読み込み
             logChangedListener = new PropertyChangedEventListener(materialManager.Log)
                 {
-                    { nameof(materialManager.Log.HasLoaded), (_, __) => RefleshData() }
+                    { nameof(materialManager.Log.HasLoaded), (_, __) =>
+                        {
+                            if (materialManager.Log.HasLoaded)
+                                RefleshData();
+                        }
+                    }
                 };
 
             // 資材データの通知設定
@@ -250,9 +258,13 @@ namespace MaterialChartPlugin.ViewModels
                         { nameof(materialManager.Bauxite),  (_,__) => RaisePropertyChanged(nameof(Bauxite)) },
                         { nameof(materialManager.RepairTool),  (_,__) => RaisePropertyChanged(nameof(RepairTool)) },
                         {
-                            // materialManagerの初期化が完了したら初回データ更新を行うよう設定
+                            // materialManagerの初期化が完了したら、DisplayedPeriodの変更時に更新を行うよう設定
                             nameof(materialManager.IsAvailable),
-                            (_,__) => ChartSettings.DisplayedPeriod.Subscribe(___ => RefleshData()).AddTo(this)
+                            (_,__) => ChartSettings.DisplayedPeriod.Subscribe(___ =>
+                                {
+                                    RefleshData();
+                                    RaisePropertyChanged(nameof(DisplayedPeriod));
+                                }).AddTo(this)
                         }
                     };
 
@@ -390,6 +402,30 @@ namespace MaterialChartPlugin.ViewModels
         public async void ExportAsCsv()
         {
             await materialManager.Log.ExportAsCsvAsync();
+        }
+
+        public async void ImportMaterialData()
+        {
+            var fileDialog = new OpenFileDialog()
+            {
+                Filter = "データファイル(*.dat)|*dat|すべてのファイル(*.*)|*.*",
+                FilterIndex = 1,
+                Title = "インポートデータの選択",
+            };
+
+            if (fileDialog.ShowDialog() == true)
+            {
+                var messageBoxResult = MessageBox.Show("インポートすると、現在のデータは上書きされます。\nよろしいですか？", "上書き確認", MessageBoxButton.OKCancel);
+                if (messageBoxResult == MessageBoxResult.OK)
+                {
+                    await materialManager.Log.ImportAsync(fileDialog.FileName);
+                }
+            }
+        }
+
+        public async void ExportMaterialData()
+        {
+            await materialManager.Log.ExportAsync();
         }
     }
 }
