@@ -9,6 +9,7 @@ using System.Runtime.Serialization;
 using System.Xml;
 using Livet;
 using ProtoBuf;
+using Grabacr07.KanColleWrapper;
 
 namespace MaterialChartPlugin.Models
 {
@@ -182,13 +183,21 @@ namespace MaterialChartPlugin.Models
 
         public async Task ImportAsync(string filePath)
         {
-            await LoadAsync(filePath, ()=>
-                plugin.InvokeNotifyRequested(new Grabacr07.KanColleViewer.Composition.NotifyEventArgs(
-                    "MaterialChartPlugin.ImportComplete", "インポート完了",
-                    "資材データのインポートに成功しました。"))
-                );
+            await LoadAsync(filePath, async () =>
+                {
+                    plugin.InvokeNotifyRequested(new Grabacr07.KanColleViewer.Composition.NotifyEventArgs(
+                        "MaterialChartPlugin.ImportComplete", "インポート完了",
+                        "資材データのインポートに成功しました。"));
 
-            await SaveAsync();
+                    var materials = KanColleClient.Current.Homeport.Materials;
+                    History.Add(new TimeMaterialsPair(DateTime.Now, materials.Fuel, materials.Ammunition, materials.Steel,
+                        materials.Bauxite, materials.InstantRepairMaterials, materials.DevelopmentMaterials,
+                        materials.InstantBuildMaterials, materials.ImprovementMaterials));
+
+                    await SaveAsync();
+                }
+            );
+
         }
 
         public async Task ExportAsync()
