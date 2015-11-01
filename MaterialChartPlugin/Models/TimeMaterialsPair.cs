@@ -86,8 +86,21 @@ namespace MaterialChartPlugin.Models
 
         public bool Equals(TimeMaterialsPair other)
         {
-            return this.DateTime == other.DateTime && this.Fuel == other.Fuel && this.Ammunition == other.Ammunition
-                && this.Steel == other.Steel && this.Bauxite == other.Bauxite && this.RepairTool == other.RepairTool;
+            return this.DateTime == other?.DateTime && this.Fuel == other?.Fuel && this.Ammunition == other?.Ammunition
+                && this.Steel == other?.Steel && this.Bauxite == other?.Bauxite && this.RepairTool == other?.RepairTool
+                && this.DevelopmentTool == other?.DevelopmentTool && this.InstantBuildTool == other?.InstantBuildTool 
+                && this.ImprovementTool == other?.ImprovementTool;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as TimeMaterialsPair);
+        }
+
+        public override int GetHashCode()
+        {
+            return DateTime.GetHashCode() ^ Fuel ^ Ammunition ^ Steel ^ Bauxite ^ RepairTool ^
+                DevelopmentTool ^ InstantBuildTool ^ ImprovementTool;
         }
 
         public override string ToString()
