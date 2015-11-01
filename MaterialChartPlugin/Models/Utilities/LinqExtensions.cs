@@ -12,5 +12,10 @@ namespace MaterialChartPlugin.Models.Utilities
         {
             return source.Distinct(new CompareSelector<T, TKey>(selector));
         }
+
+        public static IEnumerable<T> Union<T, TKey>(this IEnumerable<T> first, IEnumerable<T> second, Func<T, TKey> selector)
+        {
+            return first.Union(second, new CompareSelector<T, TKey>(selector));
+        }
     }
 }
