@@ -10,6 +10,7 @@ using System.Xml;
 using Livet;
 using ProtoBuf;
 using Grabacr07.KanColleWrapper;
+using MaterialChartPlugin.Models.Utilities;
 
 namespace MaterialChartPlugin.Models
 {
@@ -66,7 +67,10 @@ namespace MaterialChartPlugin.Models
                 {
                     using (var stream = File.OpenRead(filePath))
                     {
-                        this.History = await Task.Run(() => Serializer.Deserialize<ObservableCollection<TimeMaterialsPair>>(stream));
+                        var loadedHistory = await Task.Run(() => Serializer.Deserialize<ObservableCollection<TimeMaterialsPair>>(stream));
+                        // 現在の資材データと読み込んだ資材データとをマージ
+                        this.History = new ObservableCollection<TimeMaterialsPair>(
+                            loadedHistory.Union(History, x => x.DateTime).OrderBy(x => x.DateTime));
                     }
                     onSuccess?.Invoke();
                 }
