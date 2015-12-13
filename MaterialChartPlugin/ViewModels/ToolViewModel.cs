@@ -383,9 +383,9 @@ namespace MaterialChartPlugin.ViewModels
         /// <param name="mostMaterial">最も多い資材の量</param>
         private void SetMaterialYAxis(int mostMaterial)
         {
-            this.mostMaterial = mostMaterial;
-            var interval = ChartUtilities.GetInterval(0, mostMaterial);
-            YMax1 = ChartUtilities.GetYAxisMax(mostMaterial, interval);
+            this.mostMaterial = Math.Max(mostMaterial, 100);
+            var interval = ChartUtilities.GetInterval(0, this.mostMaterial);
+            YMax1 = ChartUtilities.GetYAxisMax(this.mostMaterial, interval);
         }
 
         /// <summary>
@@ -394,9 +394,9 @@ namespace MaterialChartPlugin.ViewModels
         /// <param name="mostRepairTool">最も多い高速修復材の量</param>
         private void SetRepairToolYAxis(int mostRepairTool)
         {
-            this.mostRepairTool = RepairTool;
-            var interval = ChartUtilities.GetInterval(0, mostRepairTool);
-            YMax2 = ChartUtilities.GetYAxisMax(mostRepairTool, interval);
+            this.mostRepairTool = Math.Max(mostRepairTool, 10);
+            var interval = ChartUtilities.GetInterval(0, this.mostRepairTool);
+            YMax2 = ChartUtilities.GetYAxisMax(this.mostRepairTool, interval);
         }
 
         public async void ExportAsCsv()
