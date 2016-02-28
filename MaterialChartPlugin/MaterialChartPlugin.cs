@@ -8,6 +8,10 @@ using System.Threading.Tasks;
 using MaterialChartPlugin.Views;
 using MaterialChartPlugin.ViewModels;
 using Livet;
+using MaterialChartPlugin.Models.Settings;
+using MetroTrilithon.Lifetime;
+using StatefulModel;
+using MaterialChartPlugin.Properties;
 
 namespace MaterialChartPlugin
 {
@@ -19,7 +23,8 @@ namespace MaterialChartPlugin
     [ExportMetadata("Author", "@terry_u16")]
     [Export(typeof(ITool))]
     [Export(typeof(IRequestNotify))]
-    public class MaterialChartPlugin : IPlugin, ITool, IRequestNotify
+    [Export(typeof(ISettings))]
+    public class MaterialChartPlugin : IPlugin, ITool, IRequestNotify, ISettings, IDisposableHolder
     {
         private ToolViewModel viewModel;
 
@@ -31,6 +36,10 @@ namespace MaterialChartPlugin
 
         // タブ表示する度に new されてしまうが、毎回 new しないとグラフが正常に表示されない模様？
         public object View => new ToolView() { DataContext = viewModel };
+
+        object ISettings.View => new SettingView() { DataContext = this };
+
+        private readonly MultipleDisposable compositDisposable = new MultipleDisposable();
 
         static MaterialChartPlugin()
         {
@@ -56,7 +65,37 @@ namespace MaterialChartPlugin
         public void Initialize()
         {
             viewModel.Initialize();
+
+            Disposable.Create(() => MaterialChartSettings.Default.Save()).AddTo(this);
         }
 
+        public Boolean CsvRecordSummary
+        {
+            get
+            {
+                return MaterialChartSettings.Default.CsvRecordSummary;
+            }
+            set
+            {
+                MaterialChartSettings.Default.CsvRecordSummary = value;
+                MaterialChartSettings.Default.Save();
+            }
+        }
+
+        public Boolean CsvRecordOrder
+        {
+            get
+            {
+                return MaterialChartSettings.Default.CsvRecordOrder;
+            }
+            set
+            {
+                MaterialChartSettings.Default.CsvRecordOrder = value;
+                MaterialChartSettings.Default.Save();
+            }
+        }
+
+        public void Dispose() => this.compositDisposable.Dispose();
+        public ICollection<IDisposable> CompositeDisposable => this.compositDisposable;
     }
 }
