@@ -10,6 +10,7 @@ using System.Xml;
 using Livet;
 using ProtoBuf;
 using Grabacr07.KanColleWrapper;
+using MaterialChartPlugin.Properties;
 
 namespace MaterialChartPlugin.Models
 {
@@ -155,10 +156,42 @@ namespace MaterialChartPlugin.Models
                 using (var writer = new StreamWriter(csvFilePath, false, Encoding.UTF8))
                 {
                     await writer.WriteLineAsync("時刻,燃料,弾薬,鋼材,ボーキサイト,高速修復材,開発資材,高速建造材,改修資材");
+                    
 
-                    foreach (var pair in History)
+                    if (MaterialChartSettings.Default.CsvRecordSummary)
                     {
-                        await writer.WriteLineAsync($"{pair.DateTime},{pair.Fuel},{pair.Ammunition},{pair.Steel},{pair.Bauxite},{pair.RepairTool},{pair.DevelopmentTool},{pair.InstantBuildTool},{pair.ImprovementTool}");
+                        // 日別にまとめる場合
+                        var dayList = History
+                            .Select(x => new { DateTime = x.DateTime, DateTimeString = x.DateTime.ToShortDateString() })
+                            .GroupBy(a => a.DateTimeString)
+                            .Select(group => group.Max(a => a.DateTime));
+
+                        if (MaterialChartSettings.Default.CsvRecordOrder)
+                        {
+                            // 降順にする
+                            dayList = dayList.OrderByDescending(x => x);
+                        }                           
+
+                        foreach (var day in dayList)
+                        {
+                            var pair = History.Where(x => x.DateTime.Equals(day)).First();
+                            await writer.WriteLineAsync($"{pair.DateTime.ToShortDateString()},{pair.Fuel},{pair.Ammunition},{pair.Steel},{pair.Bauxite},{pair.RepairTool},{pair.DevelopmentTool},{pair.InstantBuildTool},{pair.ImprovementTool}");
+                        }
+                    }
+                    else
+                    {
+                        // 時刻別
+                        var history = History.OrderBy(x => x.DateTime);
+                        if (MaterialChartSettings.Default.CsvRecordOrder)
+                        {
+                            // 降順にする
+                            history = history.OrderByDescending(x => x.DateTime);
+                        }
+
+                        foreach (var pair in history)
+                        {
+                            await writer.WriteLineAsync($"{pair.DateTime},{pair.Fuel},{pair.Ammunition},{pair.Steel},{pair.Bauxite},{pair.RepairTool},{pair.DevelopmentTool},{pair.InstantBuildTool},{pair.ImprovementTool}");
+                        }
                     }
                 }
 
